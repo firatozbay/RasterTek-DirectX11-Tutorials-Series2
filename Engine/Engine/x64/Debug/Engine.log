@@ -1,9 +1,3 @@
-﻿  textureshaderclass.cpp
-  textureclass.cpp
-  systemclass.cpp
-  modelclass.cpp
-  graphicsclass.cpp
-  main.cpp
-  Generating Code...
+﻿  graphicsclass.cpp
   Engine.vcxproj -> E:\Github\Engine\Engine\x64\Debug\Engine.exe
   Engine.vcxproj -> E:\Github\Engine\Engine\x64\Debug\Engine.pdb (Full PDB)
