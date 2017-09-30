@@ -120,5 +120,6 @@
     <None Include="light.ps">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
