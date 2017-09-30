@@ -1,3 +1,4 @@
-﻿  graphicsclass.cpp
+﻿  modelclass.cpp
+e:\github\engine\engine\engine\modelclass.cpp(209): warning C4101: 'buffer': unreferenced local variable
   Engine.vcxproj -> E:\Github\Engine\Engine\x64\Debug\Engine.exe
   Engine.vcxproj -> E:\Github\Engine\Engine\x64\Debug\Engine.pdb (Full PDB)
