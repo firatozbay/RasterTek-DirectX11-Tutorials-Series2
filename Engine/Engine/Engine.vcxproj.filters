@@ -69,6 +69,9 @@
     <ClInclude Include="textclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="soundclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -117,6 +120,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="soundclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
