@@ -221,14 +221,21 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(int mouseX, int mouseY)
+bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime)
 {
 	bool result;
 
 	static float rotation = 0.0f;
-	
-	// Set the location of the mouse.
-	result = m_Text->SetMousePosition(mouseX, mouseY, m_Direct3D->GetDeviceContext());
+
+	// Set the frames per second.
+	result = m_Text->SetFps(fps, m_Direct3D->GetDeviceContext());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Set the cpu usage.
+	result = m_Text->SetCpu(cpu, m_Direct3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
@@ -236,7 +243,7 @@ bool GraphicsClass::Frame(int mouseX, int mouseY)
 
 
 	// Update the rotation variable each frame.
-	rotation += (float)XM_PI * 0.005f;
+	rotation += (float)XM_PI * 0.0005f*frameTime;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
