@@ -21,7 +21,16 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-
+Engine/[Dd]ebug/
+Engine/[Dd]ebugPublic/
+Engine/[Rr]elease/
+Engine/[Rr]eleases/
+Engine/x64/
+Engine/x86/
+Engine/build/
+Engine/bld/
+Engine/[Bb]in/
+Engine/[Oo]bj/
 # Visual Studio 2015 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
