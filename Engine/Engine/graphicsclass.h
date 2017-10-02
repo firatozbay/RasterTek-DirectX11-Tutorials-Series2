@@ -34,11 +34,11 @@ public:
 	~GraphicsClass();
 
 	bool Initialize(int, int, HWND);
-	void Shutdown();
-	bool Frame();
+	void Shutdown();	
+	bool Frame(int, int);
 
 private:
-	bool Render(float);
+	bool Render(float,int,int);
 
 private:
 	D3DClass* m_Direct3D;

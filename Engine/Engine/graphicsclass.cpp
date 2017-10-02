@@ -162,13 +162,6 @@ void GraphicsClass::Shutdown()
 		delete m_Text;
 		m_Text = 0;
 	}
-	// Release the bitmap object.
-	if (m_Bitmap)
-	{
-		m_Bitmap->Shutdown();
-		delete m_Bitmap;
-		m_Bitmap = 0;
-	}
 
 	// Release the light object.
 	if (m_Light)
@@ -176,7 +169,8 @@ void GraphicsClass::Shutdown()
 		delete m_Light;
 		m_Light = 0;
 	}
-		// Release the bitmap object.
+
+	// Release the bitmap object.
 	if(m_Bitmap)
 	{
 		m_Bitmap->Shutdown();
@@ -227,11 +221,18 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame()
+bool GraphicsClass::Frame(int mouseX, int mouseY)
 {
 	bool result;
 
 	static float rotation = 0.0f;
+	
+	// Set the location of the mouse.
+	result = m_Text->SetMousePosition(mouseX, mouseY, m_Direct3D->GetDeviceContext());
+	if (!result)
+	{
+		return false;
+	}
 
 
 	// Update the rotation variable each frame.
@@ -242,7 +243,7 @@ bool GraphicsClass::Frame()
 	}
 
 	// Render the graphics scene.	
-	result = Render(rotation);
+	result = Render(rotation, mouseX, mouseY);
 	if (!result)
 	{
 		return false;
@@ -252,7 +253,7 @@ bool GraphicsClass::Frame()
 }
 
 
-bool GraphicsClass::Render(float rotation)
+bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	bool result;
@@ -288,7 +289,7 @@ bool GraphicsClass::Render(float rotation)
 	// Turn off the Z buffer to begin all 2D rendering.
 	m_Direct3D->TurnZBufferOff();
 	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = m_Bitmap->Render(m_Direct3D->GetDeviceContext(), 0, 0);
+	result = m_Bitmap->Render(m_Direct3D->GetDeviceContext(), mouseX, mouseY);
 	if (!result)
 	{
 		return false;
