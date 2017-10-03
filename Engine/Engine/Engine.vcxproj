@@ -159,11 +159,13 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="modellistclass.h" />
+    <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="soundclass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
+    <ClInclude Include="texturearrayclass.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
     <ClInclude Include="timerclass.h" />
@@ -185,10 +187,12 @@
     <ClCompile Include="graphicsclass.cpp" />
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="modellistclass.cpp" />
+    <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
+    <ClCompile Include="texturearrayclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
@@ -203,6 +207,8 @@
     <None Include="font.vs" />
     <None Include="light.ps" />
     <None Include="light.vs" />
+    <None Include="multitexture.ps" />
+    <None Include="multitexture.vs" />
     <None Include="packages.config" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />

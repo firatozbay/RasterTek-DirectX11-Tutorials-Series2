@@ -16,6 +16,7 @@ GraphicsClass::GraphicsClass()
 	m_Text = 0;
 	m_ModelList = 0;
 	m_Frustum = 0;
+	m_MultiTextureShader = 0;
 }
 
 
@@ -68,12 +69,29 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.	
-	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/model.txt", "../Engine/data/stone03.tga");
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/model.txt", L"../Engine/data/stone01.dds",
+	L"../Engine/data/dirt01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Create the multitexture shader object.
+	m_MultiTextureShader = new MultiTextureShaderClass;
+	if (!m_MultiTextureShader)
+	{
+		return false;
+	}
+
+	// Initialize the multitexture shader object.
+	result = m_MultiTextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the multitexture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the light shader object.
 	m_LightShader = new LightShaderClass;
 	if (!m_LightShader)
@@ -166,6 +184,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {				
+	// Release the multitexture shader object.
+	if (m_MultiTextureShader)
+	{
+		m_MultiTextureShader->Shutdown();
+		delete m_MultiTextureShader;
+		m_MultiTextureShader = 0;
+	}
+
 	// Release the frustum object.
 	if (m_Frustum)
 	{
@@ -333,10 +359,11 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 			// Render the model using the light shader.
 			//m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTexture(), m_Light->GetDirection(), color);
-			m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-				m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-
+			//m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+			//	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+			m_MultiTextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+				m_Model->GetTextureArray());
 			// Reset to the original world matrix.
 			m_Direct3D->GetWorldMatrix(worldMatrix);
 
