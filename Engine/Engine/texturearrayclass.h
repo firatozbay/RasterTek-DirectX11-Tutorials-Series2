@@ -33,14 +33,14 @@ public:
 	TextureArrayClass(const TextureArrayClass&);
 	~TextureArrayClass();
 
-	bool Initialize(ID3D11Device*, WCHAR*, WCHAR*);
+	bool Initialize(ID3D11Device*, WCHAR*, WCHAR*, WCHAR*);
 	void Shutdown();
 
 	ID3D11ShaderResourceView** GetTextureArray();
 
 private:
-	unsigned char* m_targaData[2];
-	ID3D11ShaderResourceView* m_textures[2];
+	//unsigned char* m_targaData[2];
+	ID3D11ShaderResourceView* m_textures[3];
 };
 
 #endif

@@ -18,6 +18,7 @@ GraphicsClass::GraphicsClass()
 	m_Frustum = 0;
 	m_MultiTextureShader = 0;
 	m_LightMapShader = 0;
+	m_AlphaMapShader = 0;
 }
 
 
@@ -71,10 +72,25 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the model object.	
 	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/square.txt", L"../Engine/data/stone01.dds",
-	L"../Engine/data/light01.dds");
+		L"../Engine/data/dirt01.dds", L"../Engine/data/alpha01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the alpha map shader object.
+	m_AlphaMapShader = new AlphaMapShaderClass;
+	if (!m_AlphaMapShader)
+	{
+		return false;
+	}
+
+	// Initialize the alpha map shader object.
+	result = m_AlphaMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the alpha map shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -199,7 +215,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 
 void GraphicsClass::Shutdown()
-{				
+{		
+	// Release the alpha map shader object.
+	if (m_AlphaMapShader)
+	{
+		m_AlphaMapShader->Shutdown();
+		delete m_AlphaMapShader;
+		m_AlphaMapShader = 0;
+	}
+
 	// Release the light map shader object.
 	if (m_LightMapShader)
 	{
@@ -388,7 +412,10 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 			//	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 			//m_MultiTextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray());
-			m_LightMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_LightMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	m_Model->GetTextureArray());
+			// Render the model using the alpha map shader.
+			m_AlphaMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				m_Model->GetTextureArray());
 			// Reset to the original world matrix.
 			m_Direct3D->GetWorldMatrix(worldMatrix);
