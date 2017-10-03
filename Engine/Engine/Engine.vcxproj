@@ -155,6 +155,7 @@
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
+    <ClInclude Include="lightmapshaderclass.h" />
     <ClInclude Include="lightshaderclass.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="modelclass.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="frustumclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
+    <ClCompile Include="lightmapshaderclass.cpp" />
     <ClCompile Include="lightshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
@@ -207,6 +209,8 @@
     <None Include="font.vs" />
     <None Include="light.ps" />
     <None Include="light.vs" />
+    <None Include="lightmap.ps" />
+    <None Include="lightmap.vs" />
     <None Include="multitexture.ps" />
     <None Include="multitexture.vs" />
     <None Include="packages.config" />

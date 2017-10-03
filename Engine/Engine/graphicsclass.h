@@ -18,6 +18,7 @@
 #include "modellistclass.h"
 #include "frustumclass.h"
 #include "multitextureshaderclass.h"
+#include "lightmapshaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -54,6 +55,7 @@ private:
 	ModelListClass* m_ModelList;
 	FrustumClass* m_Frustum;
 	MultiTextureShaderClass* m_MultiTextureShader;
+	LightMapShaderClass* m_LightMapShader;
 };
 
 #endif

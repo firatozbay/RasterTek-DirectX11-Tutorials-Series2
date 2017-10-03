@@ -17,6 +17,7 @@ GraphicsClass::GraphicsClass()
 	m_ModelList = 0;
 	m_Frustum = 0;
 	m_MultiTextureShader = 0;
+	m_LightMapShader = 0;
 }
 
 
@@ -69,11 +70,26 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.	
-	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/model.txt", L"../Engine/data/stone01.dds",
-	L"../Engine/data/dirt01.dds");
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/square.txt", L"../Engine/data/stone01.dds",
+	L"../Engine/data/light01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the light map shader object.
+	m_LightMapShader = new LightMapShaderClass;
+	if (!m_LightMapShader)
+	{
+		return false;
+	}
+
+	// Initialize the light map shader object.
+	result = m_LightMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the light map shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -184,6 +200,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {				
+	// Release the light map shader object.
+	if (m_LightMapShader)
+	{
+		m_LightMapShader->Shutdown();
+		delete m_LightMapShader;
+		m_LightMapShader = 0;
+	}
+
 	// Release the multitexture shader object.
 	if (m_MultiTextureShader)
 	{
@@ -362,7 +386,9 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 			//m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 			//	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-			m_MultiTextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_MultiTextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	m_Model->GetTextureArray());
+			m_LightMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				m_Model->GetTextureArray());
 			// Reset to the original world matrix.
 			m_Direct3D->GetWorldMatrix(worldMatrix);
