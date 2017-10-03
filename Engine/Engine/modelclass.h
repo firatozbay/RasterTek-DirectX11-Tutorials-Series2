@@ -30,19 +30,33 @@ private:
 		XMFLOAT3 position;
 		XMFLOAT2 texture;
 		XMFLOAT3 normal;
+		XMFLOAT3 tangent;
+		XMFLOAT3 binormal;
 	};
 	struct ModelType
 	{
 		float x, y, z;
 		float tu, tv;
 		float nx, ny, nz;
+		float tx, ty, tz;
+		float bx, by, bz;
+	};
+	struct TempVertexType
+	{
+		float x, y, z;
+		float tu, tv;
+		float nx, ny, nz;
+	};
+	struct VectorType
+	{
+		float x, y, z;
 	};
 public:
 	ModelClass();
 	ModelClass(const ModelClass&);
 	~ModelClass();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*, WCHAR*, WCHAR*, WCHAR*);
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*, WCHAR*, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
@@ -58,12 +72,15 @@ private:
 	//bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
 	//void ReleaseTexture();	
 
-	bool LoadTextures(ID3D11Device*, WCHAR*, WCHAR*, WCHAR*);
+	bool LoadTextures(ID3D11Device*, WCHAR*, WCHAR*);
 	void ReleaseTextures();
 
 	bool LoadModel(char*);
 	void ReleaseModel();
 
+	void CalculateModelVectors();
+	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
+	void CalculateNormal(VectorType, VectorType, VectorType&);
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;	

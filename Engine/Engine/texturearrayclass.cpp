@@ -22,7 +22,7 @@ TextureArrayClass::~TextureArrayClass()
 }
 
 
-bool TextureArrayClass::Initialize(ID3D11Device* device, WCHAR* filename1, WCHAR* filename2, WCHAR* filename3)
+bool TextureArrayClass::Initialize(ID3D11Device* device, WCHAR* filename1, WCHAR* filename2)
 {
 	HRESULT result;
 
@@ -40,14 +40,14 @@ bool TextureArrayClass::Initialize(ID3D11Device* device, WCHAR* filename1, WCHAR
 	{
 		return false;
 	}
-
+	/*
 	// Load the second texture in.
 	result = CreateDDSTextureFromFile(device, filename3, NULL, &m_textures[2], 0, NULL);
 	if (FAILED(result))
 	{
 		return false;
 	}
-
+	*/
 	return true;
 }
 

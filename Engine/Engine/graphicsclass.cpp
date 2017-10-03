@@ -18,7 +18,9 @@ GraphicsClass::GraphicsClass()
 	m_Frustum = 0;
 	m_MultiTextureShader = 0;
 	m_LightMapShader = 0;
-	m_AlphaMapShader = 0;
+	m_AlphaMapShader = 0;	
+	m_BumpMapShader = 0;
+	m_Light = 0;
 }
 
 
@@ -71,14 +73,27 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.	
-	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/square.txt", L"../Engine/data/stone01.dds",
-		L"../Engine/data/dirt01.dds", L"../Engine/data/alpha01.dds");
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/stone01.dds",
+		L"../Engine/data/bump01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+	// Create the bump map shader object.
+	m_BumpMapShader = new BumpMapShaderClass;
+	if (!m_BumpMapShader)
+	{
+		return false;
+	}
 
+	// Initialize the bump map shader object.
+	result = m_BumpMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		return false;
+	}
 	// Create the alpha map shader object.
 	m_AlphaMapShader = new AlphaMapShaderClass;
 	if (!m_AlphaMapShader)
@@ -216,6 +231,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {		
+	// Release the bump map shader object.
+	if (m_BumpMapShader)
+	{
+		m_BumpMapShader->Shutdown();
+		delete m_BumpMapShader;
+		m_BumpMapShader = 0;
+	}
+
 	// Release the alpha map shader object.
 	if (m_AlphaMapShader)
 	{
@@ -399,8 +422,9 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 		if (renderModel)
 		{
 			// Move the model to the location it should be rendered at.
+			//worldMatrix = XMMatrixRotationY(rotation);
 			worldMatrix = XMMatrixTranslation(positionX, positionY, positionZ);
-
+			// Rotate the world matrix by the rotation value.
 			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 			m_Model->Render(m_Direct3D->GetDeviceContext());
 
@@ -415,8 +439,11 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 			//m_LightMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray());
 			// Render the model using the alpha map shader.
-			m_AlphaMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				m_Model->GetTextureArray());
+			//m_AlphaMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	m_Model->GetTextureArray());
+			// Render the model using the bump map shader.
+			m_BumpMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+				m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor());
 			// Reset to the original world matrix.
 			m_Direct3D->GetWorldMatrix(worldMatrix);
 

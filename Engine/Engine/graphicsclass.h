@@ -20,7 +20,7 @@
 #include "multitextureshaderclass.h"
 #include "lightmapshaderclass.h"
 #include "alphamapshaderclass.h"
-
+#include "bumpmapshaderclass.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -57,7 +57,8 @@ private:
 	FrustumClass* m_Frustum;
 	MultiTextureShaderClass* m_MultiTextureShader;
 	LightMapShaderClass* m_LightMapShader;
-	AlphaMapShaderClass* m_AlphaMapShader;
+	AlphaMapShaderClass* m_AlphaMapShader;	
+	BumpMapShaderClass* m_BumpMapShader;
 };
 
 #endif
