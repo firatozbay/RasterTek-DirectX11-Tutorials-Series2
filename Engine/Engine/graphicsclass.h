@@ -15,6 +15,8 @@
 #include "lightclass.h"
 #include "bitmapclass.h"
 #include "textclass.h"
+#include "modellistclass.h"
+#include "frustumclass.h"
 
 /////////////
 // GLOBALS //
@@ -35,7 +37,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();	
-	bool Frame(int, int, int, int, float);
+	bool Frame(int, int, int, int, float,float);
 
 private:
 	bool Render(float,int,int);
@@ -43,12 +45,13 @@ private:
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;	
-	TextureShaderClass* m_TextureShader;
+	ModelClass* m_Model;
 	LightShaderClass* m_LightShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap; 
 	TextClass* m_Text;
+	ModelListClass* m_ModelList;
+	FrustumClass* m_Frustum;
 };
 
 #endif

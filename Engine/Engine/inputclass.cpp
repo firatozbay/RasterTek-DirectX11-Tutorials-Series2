@@ -233,6 +233,27 @@ bool InputClass::IsEscapePressed()
 	return false;
 }
 
+bool InputClass::IsLeftArrowPressed()
+{
+	if (m_keyboardState[DIK_LEFT] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputClass::IsRightArrowPressed()
+{
+	if (m_keyboardState[DIK_RIGHT] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 char InputClass::KeyPressed()
 {
 	int i;

@@ -16,6 +16,7 @@ using namespace DirectX;
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "textureclass.h"
+#include "textureshaderclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +36,9 @@ public:
 	BitmapClass(const BitmapClass&);
 	~BitmapClass();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, int, int, char*, int, int);
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int, char*, int, int, XMMATRIX);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, int);
+	bool Render(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, int, int);
 
 	int GetIndexCount();
 	ID3D11ShaderResourceView* GetTexture();
@@ -58,6 +59,9 @@ private:
 	int m_screenWidth, m_screenHeight;
 	int m_bitmapWidth, m_bitmapHeight;
 	int m_previousPosX, m_previousPosY;
+	XMMATRIX m_baseViewMatrix;
+	TextureShaderClass* m_TextureShader;
+
 };
 
 #endif
