@@ -105,6 +105,15 @@
     <ClInclude Include="bumpmapshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="specmapshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rendertextureclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="debugwindowclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -191,6 +200,15 @@
     <ClCompile Include="bumpmapshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="specmapshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rendertextureclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debugwindowclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -245,6 +263,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="bumpmap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="specmap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="specmap.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -11,7 +11,6 @@ GraphicsClass::GraphicsClass()
 	m_Camera = 0;
 	m_Model = 0;	
 	m_LightShader = 0;
-	m_Light = 0;
 	m_Bitmap = 0;
 	m_Text = 0;
 	m_ModelList = 0;
@@ -20,7 +19,11 @@ GraphicsClass::GraphicsClass()
 	m_LightMapShader = 0;
 	m_AlphaMapShader = 0;	
 	m_BumpMapShader = 0;
+	m_SpecMapShader = 0;
 	m_Light = 0;
+	m_RenderTexture = 0;
+	m_DebugWindow = 0;
+	m_TextureShader = 0;
 }
 
 
@@ -73,17 +76,32 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.	
-	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/stone01.dds",
-		L"../Engine/data/bump01.dds");
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/stone02.dds",
+		L"../Engine/data/bump02.dds", L"../Engine/data/spec02.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+
 	// Create the bump map shader object.
 	m_BumpMapShader = new BumpMapShaderClass;
 	if (!m_BumpMapShader)
 	{
+		return false;
+	}
+	// Create the specular map shader object.
+	m_SpecMapShader = new SpecMapShaderClass;
+	if (!m_SpecMapShader)
+	{
+		return false;
+	}
+
+	// Initialize the specular map shader object.
+	result = m_SpecMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the specular map shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -165,13 +183,56 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
-	m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_Light->SetSpecularPower(32.0f);
-
+	m_Light->SetSpecularColor(0.0f, 0.0f, 1.0f, 1.0f);
+	m_Light->SetSpecularPower(16.0f);
 	// Initialize a base view matrix with the camera for 2D user interface rendering.
 	//m_Camera->SetPosition(0.0f, 0.0f, -1.0f);
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
+
+	// Create the render to texture object.
+	m_RenderTexture = new RenderTextureClass;
+	if (!m_RenderTexture)
+	{
+		return false;
+	}
+
+	// Initialize the render to texture object.
+	result = m_RenderTexture->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Create the debug window object.
+	m_DebugWindow = new DebugWindowClass;
+	if (!m_DebugWindow)
+	{
+		return false;
+	}
+
+	// Initialize the debug window object.
+	result = m_DebugWindow->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight, 100, 100);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the texture shader object.
+	m_TextureShader = new TextureShaderClass;
+	if (!m_TextureShader)
+	{
+		return false;
+	}
+
+	// Initialize the texture shader object.
+	result = m_TextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the bitmap object.
 	m_Bitmap = new BitmapClass;
@@ -231,6 +292,38 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {		
+	// Release the texture shader object.
+	if (m_TextureShader)
+	{
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = 0;
+	}
+
+
+	// Release the debug window object.
+	if (m_DebugWindow)
+	{
+		m_DebugWindow->Shutdown();
+		delete m_DebugWindow;
+		m_DebugWindow = 0;
+	}
+
+	// Release the render to texture object.
+	if (m_RenderTexture)
+	{
+		m_RenderTexture->Shutdown();
+		delete m_RenderTexture;
+		m_RenderTexture = 0;
+	}
+	// Release the specular map shader object.
+	if (m_SpecMapShader)
+	{
+		m_SpecMapShader->Shutdown();
+		delete m_SpecMapShader;
+		m_SpecMapShader = 0;
+	}
+
 	// Release the bump map shader object.
 	if (m_BumpMapShader)
 	{
@@ -378,6 +471,100 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 
 bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 {
+	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
+	bool result;
+
+	// Render the entire scene to the texture first.
+	result = RenderToTexture(rotation, mouseX, mouseY);
+	if (!result)
+	{
+		return false;
+	}
+	// Clear the buffers to begin the scene.
+	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	// Render the scene as normal to the back buffer.
+	result = RenderScene(rotation, mouseX, mouseY);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Turn off the Z buffer to begin all 2D rendering.
+	m_Direct3D->TurnZBufferOff();
+	m_Direct3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_Direct3D->GetOrthoMatrix(orthoMatrix);
+	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	result = m_DebugWindow->Render(m_Direct3D -> GetDeviceContext(), 50, 50);
+	if (!result)
+	{
+		return false;
+	}
+	// Render the debug window using the texture shader.
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
+		orthoMatrix, m_RenderTexture->GetShaderResourceView());
+	if (!result)
+	{
+		return false;
+	}
+	/*
+	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	result = m_Bitmap->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix, mouseX, mouseY);
+	if (!result)
+	{
+		return false;
+	}
+	*/
+
+	// Turn on the alpha blending before rendering the text.
+	m_Direct3D->TurnOnAlphaBlending();
+	/*
+	*/
+	// Render the text strings.
+	result = m_Text->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix);
+	if (!result)
+	{
+		return false;
+	}
+	// Turn off alpha blending after rendering the text.
+	m_Direct3D->TurnOffAlphaBlending();
+
+	// Turn the Z buffer back on now that all 2D rendering has completed.
+	m_Direct3D->TurnZBufferOn();
+
+
+	// Present the rendered scene to the screen.
+	m_Direct3D->EndScene();
+
+	return true;
+}
+
+bool GraphicsClass::RenderToTexture(float rotation, int mouseX, int mouseY)
+{
+	bool result;
+
+	// Set the render target to be the render to texture.
+	m_RenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext(), m_Direct3D->GetDepthStencilView());
+
+	// Clear the render to texture.
+	m_RenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), m_Direct3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+
+	// Render the scene now and it will draw to the render to texture instead of the back buffer.
+	result = RenderScene(rotation, mouseX, mouseY);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	m_Direct3D->SetBackBufferRenderTarget();
+
+	return true;
+}
+
+bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
+{
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	int modelCount, renderCount, index;
 	float positionX, positionY, positionZ, radius;
@@ -422,8 +609,8 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 		if (renderModel)
 		{
 			// Move the model to the location it should be rendered at.
-			//worldMatrix = XMMatrixRotationY(rotation);
 			worldMatrix = XMMatrixTranslation(positionX, positionY, positionZ);
+			//worldMatrix = XMMatrixRotationY(rotation);
 			// Rotate the world matrix by the rotation value.
 			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 			m_Model->Render(m_Direct3D->GetDeviceContext());
@@ -442,9 +629,15 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 			//m_AlphaMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray());
 			// Render the model using the bump map shader.
-			m_BumpMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor());
+			//m_BumpMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor());
+			//
+			m_SpecMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor(),
+				m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+
 			// Reset to the original world matrix.
+
 			m_Direct3D->GetWorldMatrix(worldMatrix);
 
 			// Since this model was rendered then increase the count for this frame.
@@ -466,45 +659,15 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_Model->Render(m_Direct3D->GetDeviceContext());
-	
+
 	// Render the model using the light shader.
 	result = m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());	
+	m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result)
 	{
-		return false;
+	return false;
 	}
 	*/
-	// Turn off the Z buffer to begin all 2D rendering.
-	m_Direct3D->TurnZBufferOff();
-	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = m_Bitmap->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix, mouseX, mouseY);
-	if (!result)
-	{
-		return false;
-	}
 
-
-	// Turn on the alpha blending before rendering the text.
-	m_Direct3D->TurnOnAlphaBlending();
-	/*
-	*/
-	// Render the text strings.
-	result = m_Text->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-	// Turn off alpha blending after rendering the text.
-	m_Direct3D->TurnOffAlphaBlending();
-
-	// Turn the Z buffer back on now that all 2D rendering has completed.
-	m_Direct3D->TurnZBufferOn();
-
-
-	// Present the rendered scene to the screen.
-	m_Direct3D->EndScene();
-
-	return true;
 }

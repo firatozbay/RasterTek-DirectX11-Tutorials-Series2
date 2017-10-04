@@ -21,6 +21,10 @@
 #include "lightmapshaderclass.h"
 #include "alphamapshaderclass.h"
 #include "bumpmapshaderclass.h"
+#include "specmapshaderclass.h"
+#include "rendertextureclass.h"
+#include "debugwindowclass.h"
+
 /////////////
 // GLOBALS //
 /////////////
@@ -44,7 +48,8 @@ public:
 
 private:
 	bool Render(float,int,int);
-
+	bool RenderToTexture(float, int, int);
+	bool RenderScene(float, int, int);
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
@@ -59,6 +64,10 @@ private:
 	LightMapShaderClass* m_LightMapShader;
 	AlphaMapShaderClass* m_AlphaMapShader;	
 	BumpMapShaderClass* m_BumpMapShader;
+	SpecMapShaderClass* m_SpecMapShader;
+	RenderTextureClass* m_RenderTexture;
+	DebugWindowClass* m_DebugWindow;
+	TextureShaderClass* m_TextureShader;
 };
 
 #endif
