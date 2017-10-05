@@ -25,7 +25,8 @@ GraphicsClass::GraphicsClass()
 	m_DebugWindow = 0;
 	m_TextureShader = 0;
 	m_FogShader = 0;
-	m_ClipPlaneShader = 0;
+	m_ClipPlaneShader = 0;	
+	m_TranslateShader = 0;
 }
 
 
@@ -85,6 +86,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Create the texture translation shader object.
+	m_TranslateShader = new TranslateShaderClass;
+	if (!m_TranslateShader)
+	{
+		return false;
+	}
+
+	// Initialize the texture translation shader object.
+	result = m_TranslateShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the texture translation shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the clip plane shader object.
 	m_ClipPlaneShader = new ClipPlaneShaderClass;
 	if (!m_ClipPlaneShader)
@@ -321,6 +338,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {		
+	// Release the texture translation shader object.
+	if (m_TranslateShader)
+	{
+		m_TranslateShader->Shutdown();
+		delete m_TranslateShader;
+		m_TranslateShader = 0;
+	}
 	// Release the clip plane shader object.
 	if (m_ClipPlaneShader)
 	{
@@ -617,6 +641,13 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 	XMFLOAT4 color;
 	bool renderModel, result;
 	float fogColor, fogStart, fogEnd;
+	static float textureTranslation = 0.0f;
+	// Increment the texture translation position.
+	textureTranslation += 0.01f;
+	if (textureTranslation > 1.0f)
+	{
+		textureTranslation -= 1.0f;
+	}
 	// Setup a clipping plane.
 	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
 	// Set the color of the fog to grey.
@@ -692,8 +723,15 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 			//result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray(), fogStart, fogEnd);
 			// Render the model with the clip plane shader.
-			result = m_ClipPlaneShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
-				projectionMatrix, m_Model->GetTextureArray(), clipPlane);
+			//result = m_ClipPlaneShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+			//	projectionMatrix, m_Model->GetTextureArray(), clipPlane);
+			// Render the model with the texture translation shader.
+			result = m_TranslateShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+				projectionMatrix, m_Model->GetTexture(), textureTranslation);
+			if (!result)
+			{
+				return false;
+			}
 			// Reset to the original world matrix.
 			m_D3D->GetWorldMatrix(worldMatrix);
 
