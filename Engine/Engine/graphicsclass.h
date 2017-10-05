@@ -27,6 +27,7 @@
 #include "fogshaderclass.h"
 #include "clipplaneshaderclass.h"
 #include "translateshaderclass.h"
+#include "transparentshaderclass.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -73,6 +74,7 @@ private:
 	FogShaderClass* m_FogShader;
 	ClipPlaneShaderClass* m_ClipPlaneShader;	
 	TranslateShaderClass* m_TranslateShader;
+	TransparentShaderClass* m_TransparentShader;
 };
 
 #endif

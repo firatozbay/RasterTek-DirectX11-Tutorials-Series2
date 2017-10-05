@@ -178,6 +178,7 @@
     <ClInclude Include="textureshaderclass.h" />
     <ClInclude Include="timerclass.h" />
     <ClInclude Include="translateshaderclass.h" />
+    <ClInclude Include="transparentshaderclass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alphamapshaderclass.cpp" />
@@ -214,6 +215,7 @@
     <ClCompile Include="textureshaderclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
     <ClCompile Include="translateshaderclass.cpp" />
+    <ClCompile Include="transparentshaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />
@@ -244,6 +246,8 @@
     <None Include="texture.vs" />
     <None Include="translate.ps" />
     <None Include="translate.vs" />
+    <None Include="transparent.ps" />
+    <None Include="transparent.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

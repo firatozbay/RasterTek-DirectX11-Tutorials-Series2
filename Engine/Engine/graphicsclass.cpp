@@ -27,6 +27,7 @@ GraphicsClass::GraphicsClass()
 	m_FogShader = 0;
 	m_ClipPlaneShader = 0;	
 	m_TranslateShader = 0;
+	m_TransparentShader = 0;
 }
 
 
@@ -84,6 +85,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the transparent shader object.
+	m_TransparentShader = new TransparentShaderClass;
+	if (!m_TransparentShader)
+	{
+		return false;
+	}
+
+	// Initialize the transparent shader object.
+	result = m_TransparentShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the transparent shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -338,6 +354,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {		
+	// Release the transparent shader object.
+	if (m_TransparentShader)
+	{
+		m_TransparentShader->Shutdown();
+		delete m_TransparentShader;
+		m_TransparentShader = 0;
+	}
 	// Release the texture translation shader object.
 	if (m_TranslateShader)
 	{
@@ -642,6 +665,10 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 	bool renderModel, result;
 	float fogColor, fogStart, fogEnd;
 	static float textureTranslation = 0.0f;
+	float blendAmount;	
+	// Set the blending amount to 50%.
+	blendAmount = 0.5f;
+
 	// Increment the texture translation position.
 	textureTranslation += 0.01f;
 	if (textureTranslation > 1.0f)
@@ -678,6 +705,7 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 	// Initialize the count of models that have been rendered.
 	renderCount = 0;
 
+
 	// Go through all the models and render them only if they can be seen by the camera view.
 	for (index = 0; index<modelCount; index++)
 	{
@@ -688,7 +716,7 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 		radius = 1.0f;
 		// Check if the sphere model is in the view frustum.
 		renderModel = m_Frustum->CheckCube(positionX, positionY, positionZ, radius);
-
+		// Turn on alpha blending for the transparency to work.
 		// If it can be seen then render it, if not skip this model and check the next sphere.
 		if (renderModel)
 		{
@@ -726,20 +754,29 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 			//result = m_ClipPlaneShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
 			//	projectionMatrix, m_Model->GetTextureArray(), clipPlane);
 			// Render the model with the texture translation shader.
-			result = m_TranslateShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
-				projectionMatrix, m_Model->GetTexture(), textureTranslation);
+			//result = m_TranslateShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+			//	projectionMatrix, m_Model->GetTexture(), textureTranslation);
+			// Render the second square model with the stone texture and use the 50% blending amount for transparency.
+			m_D3D->TurnOnAlphaBlending();
+			result = m_TransparentShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+				projectionMatrix, m_Model->GetTexture(), blendAmount);
 			if (!result)
 			{
 				return false;
 			}
+			// Turn off alpha blending.
+			m_D3D->TurnOffAlphaBlending();
+
 			// Reset to the original world matrix.
 			m_D3D->GetWorldMatrix(worldMatrix);
 
 			// Since this model was rendered then increase the count for this frame.
 			renderCount++;
 		}
-	}
 
+
+	}
+	
 	// Set the number of models that was actually rendered this frame.
 	result = m_Text->SetRenderCount(renderCount, m_D3D->GetDeviceContext());
 	if (!result)
