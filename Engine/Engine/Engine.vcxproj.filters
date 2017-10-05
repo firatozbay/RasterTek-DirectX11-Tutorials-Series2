@@ -129,6 +129,12 @@
     <ClInclude Include="reflectionshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fadeshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fadebitmapclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -239,6 +245,12 @@
     <ClCompile Include="reflectionshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fadeshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fadebitmapclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -329,6 +341,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="reflection.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fade.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fade.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

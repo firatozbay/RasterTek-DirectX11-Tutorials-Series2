@@ -29,6 +29,9 @@
 #include "translateshaderclass.h"
 #include "transparentshaderclass.h"
 #include "reflectionshaderclass.h"
+#include "fadeshaderclass.h"
+#include "fadebitmapclass.h"
+
 /////////////
 // GLOBALS //
 /////////////
@@ -52,9 +55,11 @@ public:
 
 private:
 	bool Render(float,int,int);
-	bool RenderToTexture();//(float, int, int);
+	bool RenderToTexture(float);//(float, int, int);
 	//bool RenderScene(float, int, int);
 	bool RenderScene();
+	bool RenderFadingScene();
+	bool RenderNormalScene(float);
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
@@ -78,7 +83,11 @@ private:
 	TranslateShaderClass* m_TranslateShader;
 	TransparentShaderClass* m_TransparentShader;
 	ModelClass* m_FloorModel;
-	ReflectionShaderClass* m_ReflectionShader;
+	ReflectionShaderClass* m_ReflectionShader;	
+	FadeShaderClass* m_FadeShader;
+	float m_fadeInTime, m_accumulatedTime, m_fadePercentage;
+	bool m_fadeDone;
+	FadeBitmapClass* m_FadeBitmap;
 };
 
 #endif
