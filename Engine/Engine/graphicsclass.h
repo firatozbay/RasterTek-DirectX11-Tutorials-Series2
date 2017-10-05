@@ -28,6 +28,7 @@
 #include "clipplaneshaderclass.h"
 #include "translateshaderclass.h"
 #include "transparentshaderclass.h"
+#include "reflectionshaderclass.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -51,8 +52,9 @@ public:
 
 private:
 	bool Render(float,int,int);
-	bool RenderToTexture(float, int, int);
-	bool RenderScene(float, int, int);
+	bool RenderToTexture();//(float, int, int);
+	//bool RenderScene(float, int, int);
+	bool RenderScene();
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
@@ -75,6 +77,8 @@ private:
 	ClipPlaneShaderClass* m_ClipPlaneShader;	
 	TranslateShaderClass* m_TranslateShader;
 	TransparentShaderClass* m_TransparentShader;
+	ModelClass* m_FloorModel;
+	ReflectionShaderClass* m_ReflectionShader;
 };
 
 #endif

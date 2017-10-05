@@ -167,6 +167,7 @@
     <ClInclude Include="modellistclass.h" />
     <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="positionclass.h" />
+    <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="soundclass.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="modellistclass.cpp" />
     <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
+    <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="specmapshaderclass.cpp" />
@@ -240,6 +242,8 @@
     <None Include="multitexture.ps" />
     <None Include="multitexture.vs" />
     <None Include="packages.config" />
+    <None Include="reflection.ps" />
+    <None Include="reflection.vs" />
     <None Include="specmap.ps" />
     <None Include="specmap.vs" />
     <None Include="texture.ps" />
