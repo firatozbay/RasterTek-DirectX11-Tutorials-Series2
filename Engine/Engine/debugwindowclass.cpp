@@ -21,7 +21,7 @@ DebugWindowClass::~DebugWindowClass()
 }
 
 
-bool DebugWindowClass::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, int bitmapWidth, int bitmapHeight)
+bool DebugWindowClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, int screenHeight, int bitmapWidth, int bitmapHeight, XMMATRIX baseViewMatrix)
 {
 	bool result;
 
@@ -38,6 +38,9 @@ bool DebugWindowClass::Initialize(ID3D11Device* device, int screenWidth, int scr
 	m_previousPosX = -1;
 	m_previousPosY = -1;
 
+	//Initialize the base View matrix in order to have a constant view, when camera rotates
+	m_baseViewMatrix = baseViewMatrix;
+
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device);
 	if (!result)
@@ -45,6 +48,20 @@ bool DebugWindowClass::Initialize(ID3D11Device* device, int screenWidth, int scr
 		return false;
 	}
 
+	// Create the texture shader object.
+	m_TextureShader = new TextureShaderClass;
+	if (!m_TextureShader)
+	{
+		return false;
+	}
+
+	// Initialize the texture shader object.
+	result = m_TextureShader->Initialize(device, hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
 	return true;
 }
 
@@ -54,11 +71,18 @@ void DebugWindowClass::Shutdown()
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
+	// Release the texture shader object.
+	if (m_TextureShader)
+	{
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = 0;
+	}
 	return;
 }
 
 
-bool DebugWindowClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
+bool DebugWindowClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX orthoMatrix, int positionX, int positionY, ID3D11ShaderResourceView* shaderResourceView)
 {
 	bool result;
 
@@ -73,6 +97,12 @@ bool DebugWindowClass::Render(ID3D11DeviceContext* deviceContext, int positionX,
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderBuffers(deviceContext);
 
+	// Render the bitmap with the texture shader.
+	result = m_TextureShader->Render(deviceContext, m_indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, shaderResourceView);
+	if (!result)
+	{
+		return false;
+	}
 	return true;
 }
 

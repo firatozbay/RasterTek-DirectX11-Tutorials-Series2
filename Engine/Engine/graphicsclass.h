@@ -24,6 +24,7 @@
 #include "specmapshaderclass.h"
 #include "rendertextureclass.h"
 #include "debugwindowclass.h"
+#include "fogshaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -51,7 +52,7 @@ private:
 	bool RenderToTexture(float, int, int);
 	bool RenderScene(float, int, int);
 private:
-	D3DClass* m_Direct3D;
+	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	LightShaderClass* m_LightShader;
@@ -68,6 +69,7 @@ private:
 	RenderTextureClass* m_RenderTexture;
 	DebugWindowClass* m_DebugWindow;
 	TextureShaderClass* m_TextureShader;
+	FogShaderClass* m_FogShader;
 };
 
 #endif

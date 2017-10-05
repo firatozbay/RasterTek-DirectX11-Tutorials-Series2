@@ -7,7 +7,7 @@
 
 GraphicsClass::GraphicsClass()
 {
-	m_Direct3D = 0;
+	m_D3D = 0;
 	m_Camera = 0;
 	m_Model = 0;	
 	m_LightShader = 0;
@@ -24,6 +24,7 @@ GraphicsClass::GraphicsClass()
 	m_RenderTexture = 0;
 	m_DebugWindow = 0;
 	m_TextureShader = 0;
+	m_FogShader = 0;
 }
 
 
@@ -44,14 +45,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 
 	// Create the Direct3D object.
-	m_Direct3D = new D3DClass;
-	if (!m_Direct3D)
+	m_D3D = new D3DClass;
+	if (!m_D3D)
 	{
 		return false;
 	}
 
 	// Initialize the Direct3D object.
-	result = m_Direct3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
@@ -76,14 +77,27 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.	
-	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/stone02.dds",
+	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/stone02.dds",
 		L"../Engine/data/bump02.dds", L"../Engine/data/spec02.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+	// Create the fog shader object.
+	m_FogShader = new FogShaderClass;
+	if (!m_FogShader)
+	{
+		return false;
+	}
 
+	// Initialize the fog shader object.
+	result = m_FogShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the fog shader object.", L"Error", MB_OK);
+		return false;
+	}
 	// Create the bump map shader object.
 	m_BumpMapShader = new BumpMapShaderClass;
 	if (!m_BumpMapShader)
@@ -98,7 +112,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the specular map shader object.
-	result = m_SpecMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_SpecMapShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the specular map shader object.", L"Error", MB_OK);
@@ -106,7 +120,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the bump map shader object.
-	result = m_BumpMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_BumpMapShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
@@ -120,7 +134,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the alpha map shader object.
-	result = m_AlphaMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_AlphaMapShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the alpha map shader object.", L"Error", MB_OK);
@@ -135,7 +149,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light map shader object.
-	result = m_LightMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_LightMapShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the light map shader object.", L"Error", MB_OK);
@@ -150,7 +164,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the multitexture shader object.
-	result = m_MultiTextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_MultiTextureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the multitexture shader object.", L"Error", MB_OK);
@@ -165,7 +179,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light shader object.
-	result = m_LightShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
@@ -198,7 +212,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the render to texture object.
-	result = m_RenderTexture->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight);
+	result = m_RenderTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight);
 	if (!result)
 	{
 		return false;
@@ -212,7 +226,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the debug window object.
-	result = m_DebugWindow->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight, 100, 100);
+	result = m_DebugWindow->Initialize(m_D3D->GetDevice(), hwnd, screenWidth, screenHeight, 192, 108,baseViewMatrix);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
@@ -227,7 +241,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the texture shader object.
-	result = m_TextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
@@ -242,7 +256,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the bitmap object.
-	result = m_Bitmap->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, "../Engine/data/stone02.tga", 100, 100, baseViewMatrix);
+	result = m_Bitmap->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, "../Engine/data/stone02.tga", 100, 100, baseViewMatrix);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
@@ -257,7 +271,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the text object.
-	result = m_Text->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	result = m_Text->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
@@ -292,6 +306,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {		
+	// Release the fog shader object.
+	if (m_FogShader)
+	{
+		m_FogShader->Shutdown();
+		delete m_FogShader;
+		m_FogShader = 0;
+	}
+
 	// Release the texture shader object.
 	if (m_TextureShader)
 	{
@@ -418,11 +440,11 @@ void GraphicsClass::Shutdown()
 	}
 
 	// Release the Direct3D object.
-	if (m_Direct3D)
+	if (m_D3D)
 	{
-		m_Direct3D->Shutdown();
-		delete m_Direct3D;
-		m_Direct3D = 0;
+		m_D3D->Shutdown();
+		delete m_D3D;
+		m_D3D = 0;
 	}
 
 	return;
@@ -436,7 +458,7 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	static float rotation = 0.0f;
 
 	// Set the frames per second.
-	result = m_Text->SetFps(fps, m_Direct3D->GetDeviceContext());
+	result = m_Text->SetFps(fps, m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
@@ -444,7 +466,7 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	// Set the rotation of the camera.
 	m_Camera->SetRotation(0.0f, rotationY, 0.0f);
 	// Set the cpu usage.
-	result = m_Text->SetCpu(cpu, m_Direct3D->GetDeviceContext());
+	result = m_Text->SetCpu(cpu, m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
@@ -481,7 +503,7 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 		return false;
 	}
 	// Clear the buffers to begin the scene.
-	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	// Render the scene as normal to the back buffer.
 	result = RenderScene(rotation, mouseX, mouseY);
@@ -491,51 +513,51 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 	}
 
 	// Turn off the Z buffer to begin all 2D rendering.
-	m_Direct3D->TurnZBufferOff();
-	m_Direct3D->GetWorldMatrix(worldMatrix);
+	m_D3D->TurnZBufferOff();
+	m_D3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
-	m_Direct3D->GetOrthoMatrix(orthoMatrix);
+	m_D3D->GetOrthoMatrix(orthoMatrix);
 	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = m_DebugWindow->Render(m_Direct3D -> GetDeviceContext(), 50, 50);
+	result = m_DebugWindow->Render(m_D3D -> GetDeviceContext(), worldMatrix, orthoMatrix, 120, 20, m_RenderTexture->GetShaderResourceView());
 	if (!result)
 	{
 		return false;
 	}
+	/*
 	// Render the debug window using the texture shader.
-	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
 		orthoMatrix, m_RenderTexture->GetShaderResourceView());
 	if (!result)
 	{
 		return false;
-	}
+	}*/
 	/*
 	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = m_Bitmap->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix, mouseX, mouseY);
+	result = m_Bitmap->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix, mouseX, mouseY);
 	if (!result)
 	{
 		return false;
-	}
-	*/
+	}*/
 
 	// Turn on the alpha blending before rendering the text.
-	m_Direct3D->TurnOnAlphaBlending();
+	m_D3D->TurnOnAlphaBlending();
 	/*
 	*/
 	// Render the text strings.
-	result = m_Text->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix);
+	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
 	if (!result)
 	{
 		return false;
 	}
 	// Turn off alpha blending after rendering the text.
-	m_Direct3D->TurnOffAlphaBlending();
+	m_D3D->TurnOffAlphaBlending();
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
-	m_Direct3D->TurnZBufferOn();
+	m_D3D->TurnZBufferOn();
 
 
 	// Present the rendered scene to the screen.
-	m_Direct3D->EndScene();
+	m_D3D->EndScene();
 
 	return true;
 }
@@ -545,10 +567,10 @@ bool GraphicsClass::RenderToTexture(float rotation, int mouseX, int mouseY)
 	bool result;
 
 	// Set the render target to be the render to texture.
-	m_RenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext(), m_Direct3D->GetDepthStencilView());
+	m_RenderTexture->SetRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView());
 
 	// Clear the render to texture.
-	m_RenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), m_Direct3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+	m_RenderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Render the scene now and it will draw to the render to texture instead of the back buffer.
 	result = RenderScene(rotation, mouseX, mouseY);
@@ -558,7 +580,7 @@ bool GraphicsClass::RenderToTexture(float rotation, int mouseX, int mouseY)
 	}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	m_Direct3D->SetBackBufferRenderTarget();
+	m_D3D->SetBackBufferRenderTarget();
 
 	return true;
 }
@@ -570,20 +592,25 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
 	bool renderModel, result;
+	float fogColor, fogStart, fogEnd;
+	// Set the color of the fog to grey.
+	fogColor = 0.5f;
 
+	// Set the start and end of the fog.
+	fogStart = 0.0f;
+	fogEnd = 10.0f;
 
 	// Clear the buffers to begin the scene.
-	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-
+	m_D3D->BeginScene(fogColor, fogColor, fogColor, 1.0f);
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_Direct3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
-	m_Direct3D->GetProjectionMatrix(projectionMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	m_Direct3D->GetOrthoMatrix(orthoMatrix);
+	m_D3D->GetOrthoMatrix(orthoMatrix);
 
 	// Construct the frustum.
 	m_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
@@ -603,7 +630,7 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 		// Set the radius of the sphere to 1.0 since this is already known.
 		radius = 1.0f;
 		// Check if the sphere model is in the view frustum.
-		renderModel = m_Frustum->CheckSphere(positionX, positionY, positionZ, radius);
+		renderModel = m_Frustum->CheckCube(positionX, positionY, positionZ, radius);
 
 		// If it can be seen then render it, if not skip this model and check the next sphere.
 		if (renderModel)
@@ -613,32 +640,34 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 			//worldMatrix = XMMatrixRotationY(rotation);
 			// Rotate the world matrix by the rotation value.
 			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-			m_Model->Render(m_Direct3D->GetDeviceContext());
+			m_Model->Render(m_D3D->GetDeviceContext());
 
 			// Render the model using the light shader.
-			//m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTexture(), m_Light->GetDirection(), color);
-			//m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 			//	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-			//m_MultiTextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_MultiTextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray());
-			//m_LightMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_LightMapShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray());
 			// Render the model using the alpha map shader.
-			//m_AlphaMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_AlphaMapShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray());
 			// Render the model using the bump map shader.
-			//m_BumpMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_BumpMapShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			//	m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor());
 			//
-			m_SpecMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor(),
-				m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-
+			//m_SpecMapShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor(),
+			//	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+			// Render the model with the fog shader.
+			result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+				m_Model->GetTextureArray(), fogStart, fogEnd);
 			// Reset to the original world matrix.
 
-			m_Direct3D->GetWorldMatrix(worldMatrix);
+			m_D3D->GetWorldMatrix(worldMatrix);
 
 			// Since this model was rendered then increase the count for this frame.
 			renderCount++;
@@ -646,7 +675,7 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 	}
 
 	// Set the number of models that was actually rendered this frame.
-	result = m_Text->SetRenderCount(renderCount, m_Direct3D->GetDeviceContext());
+	result = m_Text->SetRenderCount(renderCount, m_D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;
@@ -658,10 +687,10 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_Direct3D->GetDeviceContext());
+	m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the light shader.
-	result = m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 	m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result)

@@ -114,6 +114,9 @@
     <ClInclude Include="debugwindowclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fogshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -209,6 +212,9 @@
     <ClCompile Include="debugwindowclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fogshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -269,6 +275,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="specmap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fog.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="fog.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

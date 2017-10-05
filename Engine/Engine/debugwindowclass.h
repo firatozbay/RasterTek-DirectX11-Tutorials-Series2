@@ -12,6 +12,10 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+#include "textureshaderclass.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: DebugWindowClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,9 +33,9 @@ public:
 	DebugWindowClass(const DebugWindowClass&);
 	~DebugWindowClass();
 
-	bool Initialize(ID3D11Device*, int, int, int, int);
+	bool Initialize(ID3D11Device*, HWND, int, int, int, int, XMMATRIX);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, int);
+	bool Render(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, int, int, ID3D11ShaderResourceView*);
 
 	int GetIndexCount();
 
@@ -47,6 +51,8 @@ private:
 	int m_screenWidth, m_screenHeight;
 	int m_bitmapWidth, m_bitmapHeight;
 	int m_previousPosX, m_previousPosY;
+	XMMATRIX m_baseViewMatrix;
+	TextureShaderClass* m_TextureShader;
 };
 
 #endif
