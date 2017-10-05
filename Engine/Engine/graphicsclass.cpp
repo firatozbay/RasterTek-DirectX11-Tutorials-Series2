@@ -25,6 +25,7 @@ GraphicsClass::GraphicsClass()
 	m_DebugWindow = 0;
 	m_TextureShader = 0;
 	m_FogShader = 0;
+	m_ClipPlaneShader = 0;
 }
 
 
@@ -82,6 +83,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+	// Create the clip plane shader object.
+	m_ClipPlaneShader = new ClipPlaneShaderClass;
+	if (!m_ClipPlaneShader)
+	{
+		return false;
+	}
+
+	// Initialize the clip plane shader object.
+	result = m_ClipPlaneShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the clip plane shader object.", L"Error", MB_OK);
 		return false;
 	}
 	// Create the fog shader object.
@@ -306,6 +321,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {		
+	// Release the clip plane shader object.
+	if (m_ClipPlaneShader)
+	{
+		m_ClipPlaneShader->Shutdown();
+		delete m_ClipPlaneShader;
+		m_ClipPlaneShader = 0;
+	}
+
 	// Release the fog shader object.
 	if (m_FogShader)
 	{
@@ -587,12 +610,15 @@ bool GraphicsClass::RenderToTexture(float rotation, int mouseX, int mouseY)
 
 bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 {
+	XMFLOAT4 clipPlane;
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	int modelCount, renderCount, index;
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
 	bool renderModel, result;
 	float fogColor, fogStart, fogEnd;
+	// Setup a clipping plane.
+	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
 	// Set the color of the fog to grey.
 	fogColor = 0.5f;
 
@@ -663,10 +689,12 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 			//m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor(),
 			//	m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 			// Render the model with the fog shader.
-			result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				m_Model->GetTextureArray(), fogStart, fogEnd);
+			//result = m_FogShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	m_Model->GetTextureArray(), fogStart, fogEnd);
+			// Render the model with the clip plane shader.
+			result = m_ClipPlaneShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+				projectionMatrix, m_Model->GetTextureArray(), clipPlane);
 			// Reset to the original world matrix.
-
 			m_D3D->GetWorldMatrix(worldMatrix);
 
 			// Since this model was rendered then increase the count for this frame.

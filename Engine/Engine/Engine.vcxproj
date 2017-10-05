@@ -147,6 +147,7 @@
     <ClInclude Include="bitmapclass.h" />
     <ClInclude Include="bumpmapshaderclass.h" />
     <ClInclude Include="cameraclass.h" />
+    <ClInclude Include="clipplaneshaderclass.h" />
     <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="bitmapclass.cpp" />
     <ClCompile Include="bumpmapshaderclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
+    <ClCompile Include="clipplaneshaderclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
@@ -219,6 +221,8 @@
     <None Include="alphamap.vs" />
     <None Include="bumpmap.ps" />
     <None Include="bumpmap.vs" />
+    <None Include="clipplane.ps" />
+    <None Include="clipplane.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
     <None Include="fog.ps" />
