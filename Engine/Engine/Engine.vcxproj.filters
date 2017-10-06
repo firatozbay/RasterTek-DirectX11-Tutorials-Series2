@@ -135,6 +135,12 @@
     <ClInclude Include="fadebitmapclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="watershaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="refractionshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -251,6 +257,12 @@
     <ClCompile Include="fadebitmapclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="watershaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="refractionshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -347,6 +359,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="fade.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="water.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="water.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="refraction.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="refraction.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

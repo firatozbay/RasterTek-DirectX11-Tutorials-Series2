@@ -170,6 +170,7 @@
     <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="reflectionshaderclass.h" />
+    <ClInclude Include="refractionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="soundclass.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="timerclass.h" />
     <ClInclude Include="translateshaderclass.h" />
     <ClInclude Include="transparentshaderclass.h" />
+    <ClInclude Include="watershaderclass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alphamapshaderclass.cpp" />
@@ -211,6 +213,7 @@
     <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
+    <ClCompile Include="refractionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="specmapshaderclass.cpp" />
@@ -222,6 +225,7 @@
     <ClCompile Include="timerclass.cpp" />
     <ClCompile Include="translateshaderclass.cpp" />
     <ClCompile Include="transparentshaderclass.cpp" />
+    <ClCompile Include="watershaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />
@@ -250,6 +254,8 @@
     <None Include="packages.config" />
     <None Include="reflection.ps" />
     <None Include="reflection.vs" />
+    <None Include="refraction.ps" />
+    <None Include="refraction.vs" />
     <None Include="specmap.ps" />
     <None Include="specmap.vs" />
     <None Include="texture.ps" />
@@ -258,6 +264,8 @@
     <None Include="translate.vs" />
     <None Include="transparent.ps" />
     <None Include="transparent.vs" />
+    <None Include="water.ps" />
+    <None Include="water.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

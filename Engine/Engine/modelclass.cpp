@@ -23,6 +23,37 @@ ModelClass::~ModelClass()
 {
 }
 
+bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* textureFilename1, char* modelFilename)
+{
+	bool result;
+
+	// Load in the model data,
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Calculate the normal, tangent, and binormal vectors for the model.
+	CalculateModelVectors();
+
+	// Initialize the vertex and index buffers.
+	result = InitializeBuffers(device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the texture for this model.
+	result = LoadTextures(device, textureFilename1, textureFilename1, textureFilename1);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2, WCHAR* textureFilename3)
 {

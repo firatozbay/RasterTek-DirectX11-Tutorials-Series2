@@ -31,6 +31,8 @@
 #include "reflectionshaderclass.h"
 #include "fadeshaderclass.h"
 #include "fadebitmapclass.h"
+#include "refractionshaderclass.h"
+#include "watershaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -60,6 +62,8 @@ private:
 	bool RenderScene();
 	bool RenderFadingScene();
 	bool RenderNormalScene(float);
+	bool RenderRefractionToTexture();
+	bool RenderReflectionToTexture();
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
@@ -88,6 +92,11 @@ private:
 	float m_fadeInTime, m_accumulatedTime, m_fadePercentage;
 	bool m_fadeDone;
 	FadeBitmapClass* m_FadeBitmap;
+	ModelClass *m_GroundModel, *m_WallModel, *m_BathModel, *m_WaterModel;
+	RenderTextureClass *m_RefractionTexture, *m_ReflectionTexture;
+	RefractionShaderClass* m_RefractionShader;
+	WaterShaderClass* m_WaterShader;
+	float m_waterHeight, m_waterTranslation;
 };
 
 #endif
