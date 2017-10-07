@@ -26,20 +26,26 @@ GraphicsClass::GraphicsClass()
 	m_ClipPlaneShader = 0;	
 	m_TranslateShader = 0;
 	m_TransparentShader = 0;
-	m_FloorModel = 0;
+	//m_FloorModel = 0;
 	m_ReflectionShader = 0;
 	m_FadeShader = 0;
 	//Water tutorial
+	/*
 	m_GroundModel = 0;
 	m_WallModel = 0;
 	m_BathModel = 0;
-	m_WaterModel = 0;
+	m_WaterModel = 0;*/
 	m_Light = 0;
 	m_RefractionTexture = 0;
 	m_ReflectionTexture = 0;
 	m_LightShader = 0;
 	m_RefractionShader = 0;
 	m_WaterShader = 0;
+	//Point Light tutorial
+	m_Light1 = 0;
+	m_Light2 = 0;
+	m_Light3 = 0;
+	m_Light4 = 0;
 }
 
 
@@ -81,6 +87,81 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the model object.
+	m_Model = new ModelClass;
+	if (!m_Model)
+	{
+		return false;
+	}
+	
+	// Initialize the model object.
+	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/stone01.dds", "../Engine/data/plane01.txt");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+	
+	// Create the light shader object.
+	m_LightShader = new LightShaderClass;
+	if (!m_LightShader)
+	{
+		return false;
+	}
+
+	// Initialize the light shader object.
+	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the first light object.
+	m_Light1 = new LightClass;
+	if (!m_Light1)
+	{
+		return false;
+	}
+
+	// Initialize the first light object.
+	m_Light1->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	m_Light1->SetPosition(-3.0f, 1.0f, 3.0f);
+
+	// Create the second light object.
+	m_Light2 = new LightClass;
+	if (!m_Light2)
+	{
+		return false;
+	}
+
+	// Initialize the second light object.
+	m_Light2->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
+	m_Light2->SetPosition(3.0f, 1.0f, 3.0f);
+
+	// Create the third light object.
+	m_Light3 = new LightClass;
+	if (!m_Light3)
+	{
+		return false;
+	}
+
+	// Initialize the third light object.
+	m_Light3->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	m_Light3->SetPosition(-3.0f, 1.0f, -3.0f);
+
+	// Create the fourth light object.
+	m_Light4 = new LightClass;
+	if (!m_Light4)
+	{
+		return false;
+	}
+
+	// Initialize the fourth light object.
+	m_Light4->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light4->SetPosition(3.0f, 1.0f, -3.0f);
+
+	/*
 	// Create the ground model object.
 	m_GroundModel = new ModelClass;
 	if (!m_GroundModel)
@@ -147,7 +228,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-
+	
 	// Initialize the refraction render to texture object.
 	result = m_RefractionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight);
 	if (!result)
@@ -207,18 +288,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the position of the water.
 	m_waterTranslation = 0.0f;
-
+	*/
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
+	//m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
+	/*
 	// Create the model object.
 	m_Model = new ModelClass;
 	if (!m_Model)
 	{
 		return false;
 	}
-	
 	// Initialize the model object.	
 	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/stone02.dds",
 		L"../Engine/data/bump02.dds", L"../Engine/data/spec02.dds");
@@ -227,7 +308,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
-
+	*/
 	// Create the render to texture object.
 	m_RenderTexture = new RenderTextureClass;
 	if (!m_RenderTexture)
@@ -283,14 +364,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the fade shader object.", L"Error", MB_OK);
 		return false;
 	}
-
+	/*
 	// Create the floor model
 	m_FloorModel = new ModelClass;
 	if (!m_FloorModel)
 	{
 		return false;
-	}
-
+	}*/
+	/*
 	// Initialize the floor model object.
 	result = m_FloorModel->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), "../Engine/data/floor.txt", L"../Engine/data/blue01.dds", 
 		L"../Engine/data/blue01.dds", L"../Engine/data/blue01.dds");
@@ -299,7 +380,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
 		return false;
 	}
-
+	*/
 	// Create the reflection shader object.
 	m_ReflectionShader = new ReflectionShaderClass;
 	if (!m_ReflectionShader)
@@ -580,7 +661,32 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 
 void GraphicsClass::Shutdown()
-{		
+{
+	// Release the light objects.
+	if (m_Light1)
+	{
+		delete m_Light1;
+		m_Light1 = 0;
+	}
+
+	if (m_Light2)
+	{
+		delete m_Light2;
+		m_Light2 = 0;
+	}
+
+	if (m_Light3)
+	{
+		delete m_Light3;
+		m_Light3 = 0;
+	}
+
+	if (m_Light4)
+	{
+		delete m_Light4;
+		m_Light4 = 0;
+	}
+
 	// Release the water shader object.
 	if (m_WaterShader)
 	{
@@ -627,7 +733,7 @@ void GraphicsClass::Shutdown()
 		delete m_Light;
 		m_Light = 0;
 	}
-
+	/*
 	// Release the water model object.
 	if (m_WaterModel)
 	{
@@ -659,7 +765,7 @@ void GraphicsClass::Shutdown()
 		delete m_GroundModel;
 		m_GroundModel = 0;
 	}
-
+	*/
 	// Release the fade shader object.
 	if (m_FadeShader)
 	{
@@ -682,7 +788,7 @@ void GraphicsClass::Shutdown()
 		delete m_ReflectionShader;
 		m_ReflectionShader = 0;
 	}
-
+	/*
 	// Release the floor model object.
 	if (m_FloorModel)
 	{
@@ -690,7 +796,7 @@ void GraphicsClass::Shutdown()
 		delete m_FloorModel;
 		m_FloorModel = 0;
 	}
-
+	*/
 	// Release the transparent shader object.
 	if (m_TransparentShader)
 	{
@@ -861,8 +967,10 @@ void GraphicsClass::Shutdown()
 bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime, float rotationY)
 {
 	bool result;
-
 	float rotation = 0.0f;
+
+	// Set the position of the camera.
+	m_Camera->SetPosition(0.0f, 2.0f, -12.0f);
 	/*
 	if (!m_fadeDone)
 	{
@@ -900,7 +1008,7 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	}*/
 	//m_Camera->SetRotation(0.0f, rotationY, 0.0f);	
 	// Update the position of the water to simulate motion.
-	m_waterTranslation += 0.001f;
+	/*m_waterTranslation += 0.001f;
 	if (m_waterTranslation > 1.0f)
 	{
 		m_waterTranslation -= 1.0f;
@@ -908,7 +1016,7 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 
 	// Set the position and rotation of the camera.
 	m_Camera->SetPosition(-10.0f, 6.0f, -10.0f);
-	m_Camera->SetRotation(0.0f, 45.0f, 0.0f);
+	m_Camera->SetRotation(0.0f, 45.0f, 0.0f);*/
 	/*
 	// Update the rotation variable each frame.
 	rotation += (float)XM_PI * 0.0005f*frameTime;
@@ -930,11 +1038,55 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 
 bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 {
-	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	XMFLOAT4 diffuseColor[4];
+	XMFLOAT4 lightPosition[4];
+	bool result;
+
+
+	// Create the diffuse color array from the four light colors.
+	diffuseColor[0] = m_Light1->GetDiffuseColor();
+	diffuseColor[1] = m_Light2->GetDiffuseColor();
+	diffuseColor[2] = m_Light3->GetDiffuseColor();
+	diffuseColor[3] = m_Light4->GetDiffuseColor();
+
+	// Create the light position array from the four light positions.
+	lightPosition[0] = m_Light1->GetPosition();
+	lightPosition[1] = m_Light2->GetPosition();
+	lightPosition[2] = m_Light3->GetPosition();
+	lightPosition[3] = m_Light4->GetPosition();
+
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	// Render the model using the light shader and the light arrays.
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture(), diffuseColor, lightPosition);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
+
+	return true;
+	/*XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
 	bool result;	
 	static float rotation1 = 0.0f;
-
-
+	*/
+	/*
 	// Update the rotation variable each frame.
 	rotation1 += (float)XM_PI * 0.005f;
 	if (rotation1 > 360.0f)
@@ -962,7 +1114,7 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 	{
 		return false;
 	}
-
+	*/
 	/*
 	if (m_fadeDone)
 	{
@@ -1091,7 +1243,7 @@ bool GraphicsClass::RenderToTexture(float rotation)
 
 	return true;
 }
-
+/*
 bool GraphicsClass::RenderFadingScene()
 {
 	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
@@ -1176,7 +1328,7 @@ bool GraphicsClass::RenderNormalScene(float rotation)
 
 	return true;
 }
-
+*/
 /*
 bool GraphicsClass::RenderToTexture()//(float rotation, int mouseX, int mouseY)
 {
@@ -1240,7 +1392,7 @@ bool GraphicsClass::RenderScene()
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 	bool result;
 
-
+	/*
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -1259,9 +1411,9 @@ bool GraphicsClass::RenderScene()
 	m_GroundModel->Render(m_D3D->GetDeviceContext());
 
 	// Render the ground model using the light shader.
-	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, m_GroundModel->GetTexture(), m_Light->GetDirection(),
-		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	//result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix,
+	//	projectionMatrix, m_GroundModel->GetTexture(), m_Light->GetDirection(),
+	//	m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result)
 	{
 		return false;
@@ -1277,9 +1429,9 @@ bool GraphicsClass::RenderScene()
 	m_WallModel->Render(m_D3D->GetDeviceContext());
 
 	// Render the wall model using the light shader.
-	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_WallModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, m_WallModel->GetTexture(), m_Light->GetDirection(),
-		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	//result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_WallModel->GetIndexCount(), worldMatrix, viewMatrix,
+	//	projectionMatrix, m_WallModel->GetTexture(), m_Light->GetDirection(),
+	//	m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result)
 	{
 		return false;
@@ -1295,9 +1447,9 @@ bool GraphicsClass::RenderScene()
 	m_BathModel->Render(m_D3D->GetDeviceContext());
 
 	// Render the bath model using the light shader.
-	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_BathModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, m_BathModel->GetTexture(), m_Light->GetDirection(),
-		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	//result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_BathModel->GetIndexCount(), worldMatrix, viewMatrix,
+	//	projectionMatrix, m_BathModel->GetTexture(), m_Light->GetDirection(),
+	//	m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result)
 	{
 		return false;
@@ -1319,12 +1471,13 @@ bool GraphicsClass::RenderScene()
 	result = m_WaterShader->Render(m_D3D->GetDeviceContext(), m_WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, reflectionMatrix, m_ReflectionTexture->GetShaderResourceView(),
 		m_RefractionTexture->GetShaderResourceView(), m_WaterModel->GetTexture(),
-		m_waterTranslation, 0.01f);
+	
+	m_waterTranslation, 0.01f);
 	if (!result)
 	{
 		return false;
 	}
-
+	*/
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
 
@@ -1543,7 +1696,7 @@ bool GraphicsClass::RenderScene(float rotation, int mouseX, int mouseY)
 	
 
 }*/
-
+/*
 bool GraphicsClass::RenderRefractionToTexture()
 {
 	XMFLOAT4 clipPlane;
@@ -1629,4 +1782,4 @@ bool GraphicsClass::RenderReflectionToTexture()
 	m_D3D->SetBackBufferRenderTarget();
 
 	return true;
-}
+}*/

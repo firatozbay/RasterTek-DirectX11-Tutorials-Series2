@@ -18,6 +18,12 @@ LightClass::~LightClass()
 {
 }
 
+void LightClass::SetPosition(float x, float y, float z)
+{
+	m_position = XMFLOAT4(x, y, z, 1.0f);
+	return;
+}
+
 void LightClass::SetAmbientColor(float red, float green, float blue, float alpha)
 {
 	m_ambientColor = XMFLOAT4(red, green, blue, alpha);
@@ -43,11 +49,15 @@ void LightClass::SetSpecularColor(float red, float green, float blue, float alph
 	return;
 }
 
-
 void LightClass::SetSpecularPower(float power)
 {
 	m_specularPower = power;
 	return;
+}
+
+XMFLOAT4 LightClass::GetPosition()
+{
+	return m_position;
 }
 
 XMFLOAT4 LightClass::GetAmbientColor()
