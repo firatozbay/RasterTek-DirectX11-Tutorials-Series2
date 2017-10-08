@@ -51,6 +51,8 @@ GraphicsClass::GraphicsClass()
 	m_FireShader = 0;
 	m_FloorModel = 0;
 	m_BillboardModel = 0;
+
+	m_DepthShader = 0;
 }
 
 
@@ -134,6 +136,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the depth shader object.
+	m_DepthShader = new DepthShaderClass;
+	if (!m_DepthShader)
+	{
+		return false;
+	}
+
+	// Initialize the depth shader object.
+	result = m_DepthShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the depth shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -742,6 +759,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
+	// Release the depth shader object.
+	if (m_DepthShader)
+	{
+		m_DepthShader->Shutdown();
+		delete m_DepthShader;
+		m_DepthShader = 0;
+	}
+
 	// Release the billboard model object.
 	if (m_BillboardModel)
 	{
@@ -1154,6 +1179,37 @@ bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
 
 bool GraphicsClass::Render()//(float rotation, int mouseX, int mouseY)
 {
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	bool result;
+
+
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_FloorModel->Render(m_D3D->GetDeviceContext());
+
+
+	// Render the model using the depth shader.
+	result = m_DepthShader->Render(m_D3D->GetDeviceContext(), m_FloorModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
+
+	return true;
+	/*
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
 	bool result;
 	XMFLOAT3 cameraPosition, modelPosition;
@@ -1183,8 +1239,8 @@ bool GraphicsClass::Render()//(float rotation, int mouseX, int mouseY)
 		return false;
 	}
 
-		// Get the position of the camera.
-		cameraPosition = m_Camera->GetPosition();
+	// Get the position of the camera.
+	cameraPosition = m_Camera->GetPosition();
 
 	// Set the position of the billboard model.
 	modelPosition.x = 0.0f;
@@ -1219,7 +1275,7 @@ bool GraphicsClass::Render()//(float rotation, int mouseX, int mouseY)
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
-
+	*/
 	/*
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;

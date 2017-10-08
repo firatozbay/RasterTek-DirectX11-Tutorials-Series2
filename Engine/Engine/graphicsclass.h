@@ -35,14 +35,15 @@
 #include "watershaderclass.h"
 #include "glassshaderclass.h"
 #include "fireshaderclass.h"
+#include "depthshaderclass.h"
 
 /////////////
 // GLOBALS //
 /////////////
 const bool FULL_SCREEN = true;
-const bool VSYNC_ENABLED = true;
-const float SCREEN_DEPTH = 1000.0f;
-const float SCREEN_NEAR = 0.1f;
+const bool VSYNC_ENABLED = true; 
+const float SCREEN_DEPTH = 100.0f;
+const float SCREEN_NEAR = 1.0f;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,6 +105,7 @@ private:
 	GlassShaderClass* m_GlassShader;
 	FireShaderClass* m_FireShader;
 	ModelClass *m_FloorModel, *m_BillboardModel;
+	DepthShaderClass* m_DepthShader;
 };
 
 #endif

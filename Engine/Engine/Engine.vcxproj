@@ -152,6 +152,7 @@
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="debugwindowclass.h" />
+    <ClInclude Include="depthshaderclass.h" />
     <ClInclude Include="fadebitmapclass.h" />
     <ClInclude Include="fadeshaderclass.h" />
     <ClInclude Include="fireshaderclass.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="debugwindowclass.cpp" />
+    <ClCompile Include="depthshaderclass.cpp" />
     <ClCompile Include="fadebitmapclass.cpp" />
     <ClCompile Include="fadeshaderclass.cpp" />
     <ClCompile Include="fireshaderclass.cpp" />
@@ -243,6 +245,8 @@
     <None Include="clipplane.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="depth.ps" />
+    <None Include="depth.vs" />
     <None Include="fade.ps" />
     <None Include="fade.vs" />
     <None Include="fire.ps" />
