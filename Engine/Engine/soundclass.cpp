@@ -8,7 +8,9 @@ SoundClass::SoundClass()
 {
 	m_DirectSound = 0;
 	m_primaryBuffer = 0;
+	m_listener = 0;
 	m_secondaryBuffer1 = 0;
+	m_secondary3DBuffer1 = 0;
 }
 
 
@@ -35,7 +37,7 @@ bool SoundClass::Initialize(HWND hwnd)
 	}
 
 	// Load a wave audio file onto a secondary buffer.
-	result = LoadWaveFile("../Engine/data/sound01.wav", &m_secondaryBuffer1);
+	result = LoadWaveFile("../Engine/data/sound02.wav", &m_secondaryBuffer1, &m_secondary3DBuffer1);
 	if (!result)
 	{
 		return false;
@@ -55,7 +57,7 @@ bool SoundClass::Initialize(HWND hwnd)
 void SoundClass::Shutdown()
 {
 	// Release the secondary buffer.
-	ShutdownWaveFile(&m_secondaryBuffer1);
+	ShutdownWaveFile(&m_secondaryBuffer1, &m_secondary3DBuffer1);
 
 	// Shutdown the Direct Sound API.
 	ShutdownDirectSound();
@@ -87,7 +89,7 @@ bool SoundClass::InitializeDirectSound(HWND hwnd)
 
 	// Setup the primary buffer description.
 	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
-	bufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
+	bufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRL3D;
 	bufferDesc.dwBufferBytes = 0;
 	bufferDesc.dwReserved = 0;
 	bufferDesc.lpwfxFormat = NULL;
@@ -117,12 +119,29 @@ bool SoundClass::InitializeDirectSound(HWND hwnd)
 		return false;
 	}
 
+	// Obtain a listener interface.
+	result = m_primaryBuffer->QueryInterface(IID_IDirectSound3DListener8, (LPVOID*)&m_listener);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Set the initial position of the listener to be in the middle of the scene.
+	m_listener->SetPosition(0.0f, 0.0f, 0.0f, DS3D_IMMEDIATE);
+
 	return true;
 }
 
 
 void SoundClass::ShutdownDirectSound()
 {
+	// Release the listener interface.
+	if (m_listener)
+	{
+		m_listener->Release();
+		m_listener = 0;
+	}
+
 	// Release the primary sound buffer pointer.
 	if (m_primaryBuffer)
 	{
@@ -141,7 +160,7 @@ void SoundClass::ShutdownDirectSound()
 }
 
 
-bool SoundClass::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuffer)
+bool SoundClass::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuffer, IDirectSound3DBuffer8** secondary3DBuffer)
 {
 	int error;
 	FILE* filePtr;
@@ -197,8 +216,8 @@ bool SoundClass::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuf
 		return false;
 	}
 
-	// Check that the wave file was recorded in stereo format.
-	if (waveFileHeader.numChannels != 2)
+	// Check that the wave file was recorded in mono format.
+	if (waveFileHeader.numChannels != 1)
 	{
 		return false;
 	}
@@ -226,14 +245,14 @@ bool SoundClass::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuf
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 	waveFormat.nSamplesPerSec = 44100;
 	waveFormat.wBitsPerSample = 16;
-	waveFormat.nChannels = 2;
+	waveFormat.nChannels = 1;
 	waveFormat.nBlockAlign = (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
 	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 	waveFormat.cbSize = 0;
 
 	// Set the buffer description of the secondary sound buffer that the wave file will be loaded onto.
 	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
-	bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME;
+	bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_CTRL3D;
 	bufferDesc.dwBufferBytes = waveFileHeader.dataSize;
 	bufferDesc.dwReserved = 0;
 	bufferDesc.lpwfxFormat = &waveFormat;
@@ -302,12 +321,26 @@ bool SoundClass::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuf
 	delete[] waveData;
 	waveData = 0;
 
+	// Get the 3D interface to the secondary sound buffer.
+	result = (*secondaryBuffer)->QueryInterface(IID_IDirectSound3DBuffer8, (void**)&*secondary3DBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 
-void SoundClass::ShutdownWaveFile(IDirectSoundBuffer8** secondaryBuffer)
+void SoundClass::ShutdownWaveFile(IDirectSoundBuffer8** secondaryBuffer, IDirectSound3DBuffer8** secondary3DBuffer)
 {
+	// Release the 3D interface to the secondary sound buffer.
+	if (*secondary3DBuffer)
+	{
+		(*secondary3DBuffer)->Release();
+		*secondary3DBuffer = 0;
+	}
+
 	// Release the secondary sound buffer.
 	if (*secondaryBuffer)
 	{
@@ -322,7 +355,13 @@ void SoundClass::ShutdownWaveFile(IDirectSoundBuffer8** secondaryBuffer)
 bool SoundClass::PlayWaveFile()
 {
 	HRESULT result;
+	float positionX, positionY, positionZ;
 
+
+	// Set the 3D position of where the sound should be located.
+	positionX = -2.0f;
+	positionY = 0.0f;
+	positionZ = 0.0f;
 
 	// Set position at the beginning of the sound buffer.
 	result = m_secondaryBuffer1->SetCurrentPosition(0);
@@ -332,11 +371,14 @@ bool SoundClass::PlayWaveFile()
 	}
 
 	// Set volume of the buffer to 100%.
-	result = m_secondaryBuffer1->SetVolume(DSBVOLUME_MIN);
+	result = m_secondaryBuffer1->SetVolume(DSBVOLUME_MAX);
 	if (FAILED(result))
 	{
 		return false;
 	}
+
+	// Set the 3D position of the sound.
+	m_secondary3DBuffer1->SetPosition(positionX, positionY, positionZ, DS3D_IMMEDIATE);
 
 	// Play the contents of the secondary sound buffer.
 	result = m_secondaryBuffer1->Play(0, 0, 0);
