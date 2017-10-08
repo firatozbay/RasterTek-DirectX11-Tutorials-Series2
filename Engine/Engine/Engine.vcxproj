@@ -154,6 +154,7 @@
     <ClInclude Include="debugwindowclass.h" />
     <ClInclude Include="fadebitmapclass.h" />
     <ClInclude Include="fadeshaderclass.h" />
+    <ClInclude Include="fireshaderclass.h" />
     <ClInclude Include="fogshaderclass.h" />
     <ClInclude Include="fontclass.h" />
     <ClInclude Include="fontshaderclass.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="debugwindowclass.cpp" />
     <ClCompile Include="fadebitmapclass.cpp" />
     <ClCompile Include="fadeshaderclass.cpp" />
+    <ClCompile Include="fireshaderclass.cpp" />
     <ClCompile Include="fogshaderclass.cpp" />
     <ClCompile Include="fontclass.cpp" />
     <ClCompile Include="fontshaderclass.cpp" />
@@ -243,6 +245,8 @@
     <None Include="color.vs" />
     <None Include="fade.ps" />
     <None Include="fade.vs" />
+    <None Include="fire.ps" />
+    <None Include="fire.vs" />
     <None Include="fog.ps" />
     <None Include="fog.vs" />
     <None Include="font.ps" />

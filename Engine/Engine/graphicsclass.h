@@ -34,6 +34,7 @@
 #include "refractionshaderclass.h"
 #include "watershaderclass.h"
 #include "glassshaderclass.h"
+#include "fireshaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -101,6 +102,7 @@ private:
 	LightClass *m_Light1, *m_Light2, *m_Light3, *m_Light4;
 	ModelClass* m_WindowModel;
 	GlassShaderClass* m_GlassShader;
+	FireShaderClass* m_FireShader;
 };
 
 #endif
