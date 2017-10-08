@@ -55,10 +55,10 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();	
-	bool Frame(int, int, int, int, float,float);
+	bool Frame(float,float,float);//(int, int, int, int, float,float);
 
 private:
-	bool Render(float,int,int);
+	bool Render();// (float, int, int);
 	bool RenderToTexture(float);//(float, int, int);
 	//bool RenderScene(float, int, int);
 	bool RenderScene();
@@ -103,6 +103,7 @@ private:
 	ModelClass* m_WindowModel;
 	GlassShaderClass* m_GlassShader;
 	FireShaderClass* m_FireShader;
+	ModelClass *m_FloorModel, *m_BillboardModel;
 };
 
 #endif

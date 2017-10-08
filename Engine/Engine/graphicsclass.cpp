@@ -49,6 +49,8 @@ GraphicsClass::GraphicsClass()
 
 	m_GlassShader = 0;
 	m_FireShader = 0;
+	m_FloorModel = 0;
+	m_BillboardModel = 0;
 }
 
 
@@ -87,6 +89,36 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 	if (!m_Camera)
 	{
+		return false;
+	}
+
+	// Create the floor model object.
+	m_FloorModel = new ModelClass;
+	if (!m_FloorModel)
+	{
+		return false;
+	}
+
+	// Initialize the floor model object.
+	result = m_FloorModel->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(),  L"../Engine/data/grid01.dds", "../Engine/data/floor.txt");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the billboard model object.
+	m_BillboardModel = new ModelClass;
+	if (!m_BillboardModel)
+	{
+		return false;
+	}
+
+	// Initialize the billboard model object.
+	result = m_BillboardModel->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/seafloor.dds", "../Engine/data/square.txt");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the billboard model object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -419,8 +451,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!m_FloorModel)
 	{
 		return false;
-	}*/
-	/*
+	}
 	// Initialize the floor model object.
 	result = m_FloorModel->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), "../Engine/data/floor.txt", L"../Engine/data/blue01.dds", 
 		L"../Engine/data/blue01.dds", L"../Engine/data/blue01.dds");
@@ -711,6 +742,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
+	// Release the billboard model object.
+	if (m_BillboardModel)
+	{
+		m_BillboardModel->Shutdown();
+		delete m_BillboardModel;
+		m_BillboardModel = 0;
+	}
+
+	// Release the floor model object.
+	if (m_FloorModel)
+	{
+		m_FloorModel->Shutdown();
+		delete m_FloorModel;
+		m_FloorModel = 0;
+	}
 	// Release the fire shader object.
 	if (m_FireShader)
 	{
@@ -1029,8 +1075,7 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime, float rotationY)
-{
+bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
 	bool result;
 	static float rotation = 0.0f;
 
@@ -1080,26 +1125,25 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	// Set the position and rotation of the camera.
 	m_Camera->SetPosition(-10.0f, 6.0f, -10.0f);
 	m_Camera->SetRotation(0.0f, 45.0f, 0.0f);*/
-	
 	// Update the rotation variable each frame.
-	rotation += (float)XM_PI * 0.0005f*frameTime;
+	rotation += (float)XM_PI * 0.0005f;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
-	} 
+	}
 
-	// Set the position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
-
+	// Update the position of the camera.
+	m_Camera->SetPosition(positionX, positionY, positionZ);
+	/*
 	// Render the scene to texture first.
 	result = RenderToTexture(rotation);
 	if (!result)
 	{
 		return false;
 	}
-
+	*/
 	// Render the graphics scene.	
-	result = Render(rotation, mouseX, mouseY);
+	result = Render();//(rotation, 0, 0);
 	if (!result)
 	{
 		return false;
@@ -1108,8 +1152,75 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	return true;
 }
 
-bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
+bool GraphicsClass::Render()//(float rotation, int mouseX, int mouseY)
 {
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
+	bool result;
+	XMFLOAT3 cameraPosition, modelPosition;
+	double angle;
+	float rotation;
+
+
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_FloorModel->Render(m_D3D->GetDeviceContext());
+
+	// Render the floor model using the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_FloorModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_FloorModel->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+
+		// Get the position of the camera.
+		cameraPosition = m_Camera->GetPosition();
+
+	// Set the position of the billboard model.
+	modelPosition.x = 0.0f;
+	modelPosition.y = 1.5f;
+	modelPosition.z = 0.0f;
+
+	// Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
+	angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0 / XM_PI);
+
+	// Convert rotation into radians.
+	rotation = (float)angle * 0.0174532925f; //Look at based billboarding
+	rotation = -m_Camera->GetRotation().y;	 //View based billboarding, both of them are y axis only
+	// Setup the rotation the billboard at the origin using the world matrix.
+	worldMatrix = XMMatrixRotationY(rotation);
+
+	// Setup the translation matrix from the billboard model.
+	translateMatrix = XMMatrixTranslation( modelPosition.x, modelPosition.y, modelPosition.z);
+
+	// Finally combine the rotation and translation matrices to create the final world matrix for the billboard model.
+	worldMatrix = XMMatrixMultiply( worldMatrix, translateMatrix);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_BillboardModel->Render(m_D3D->GetDeviceContext());
+
+	// Render the model using the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_BillboardModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_BillboardModel->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
+
+	/*
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 	XMFLOAT3 scrollSpeeds, scales;
@@ -1174,7 +1285,7 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
 
-	return true;
+	return true;*/
 	/*
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	float refractionScale;

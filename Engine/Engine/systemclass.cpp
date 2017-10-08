@@ -265,7 +265,7 @@ bool SystemClass::Frame()
 	m_Position->GetRotation(rotationY);
 	key = m_Input->KeyPressed();
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(mouseX, mouseY, m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime(), rotationY);
+	result = m_Graphics->Frame(-3, 1, -10);//(mouseX, mouseY, m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime(), rotationY);
 	if (!result)
 	{
 		return false;
