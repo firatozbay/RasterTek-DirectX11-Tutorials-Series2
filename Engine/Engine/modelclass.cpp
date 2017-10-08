@@ -121,10 +121,17 @@ ID3D11ShaderResourceView* ModelClass::GetTexture()
 {
 	return m_TextureArray->GetTextureArray()[0];
 }
+
+ID3D11ShaderResourceView* ModelClass::GetNormalMap()
+{
+	return m_TextureArray->GetTextureArray()[1];
+}
+
 ID3D11ShaderResourceView** ModelClass::GetTextureArray()
 {
 	return m_TextureArray->GetTextureArray();
 }
+
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
 	VertexType* vertices;

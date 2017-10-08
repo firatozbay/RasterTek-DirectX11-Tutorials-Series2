@@ -63,7 +63,8 @@ public:
 
 	int GetIndexCount();
 
-	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView* GetTexture();		//Assume it is 0
+	ID3D11ShaderResourceView* GetNormalMap();	//Assume it is 1
 	ID3D11ShaderResourceView** GetTextureArray();
 private:
 	bool InitializeBuffers(ID3D11Device*);

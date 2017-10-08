@@ -46,6 +46,8 @@ GraphicsClass::GraphicsClass()
 	m_Light2 = 0;
 	m_Light3 = 0;
 	m_Light4 = 0;
+
+	m_GlassShader = 0;
 }
 
 
@@ -93,21 +95,52 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-	
+
 	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/stone01.dds", "../Engine/data/plane01.txt");
+	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), "../Engine/data/cube.txt", L"../Engine/data/seafloor.dds", L"../Engine/data/bump03.dds", L"../Engine/data/bump03.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
-	
+
+	// Create the window model object.
+	m_WindowModel = new ModelClass;
+	if (!m_WindowModel)
+	{
+		return false;
+	}
+
+	// Initialize the window model object.
+	result = m_WindowModel->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), "../Engine/data/square.txt", L"../Engine/data/ice01.dds", L"../Engine/data/icebump01.dds", L"../Engine/data/icebump01.dds");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the window model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the glass shader object.
+	m_GlassShader = new GlassShaderClass;
+	if (!m_GlassShader)
+	{
+		return false;
+	}
+
+	// Initialize the glass shader object.
+	result = m_GlassShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the glass shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the light shader object.
 	m_LightShader = new LightShaderClass;
 	if (!m_LightShader)
 	{
 		return false;
 	}
+
 
 	// Initialize the light shader object.
 	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
@@ -322,7 +355,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-
+	/*
 	// Create the bitmap object.
 	m_FadeBitmap = new FadeBitmapClass;
 	if (!m_FadeBitmap)
@@ -337,7 +370,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
 		return false;
 	}
-
+	*/
 	// Set the fade in time to 3000 milliseconds.
 	m_fadeInTime = 3000.0f;
 
@@ -662,6 +695,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
+	// Release the glass shader object.
+	if (m_GlassShader)
+	{
+		m_GlassShader->Shutdown();
+		delete m_GlassShader;
+		m_GlassShader = 0;
+	}
+
 	// Release the light objects.
 	if (m_Light1)
 	{
@@ -773,14 +814,14 @@ void GraphicsClass::Shutdown()
 		delete m_FadeShader;
 		m_FadeShader = 0;
 	}
-
+	/*
 	// Release the bitmap object.
 	if (m_FadeBitmap)
 	{
 		m_FadeBitmap->Shutdown();
 		delete m_FadeBitmap;
 		m_FadeBitmap = 0;
-	}
+	}*/
 	// Release the reflection shader object.
 	if (m_ReflectionShader)
 	{
@@ -967,10 +1008,8 @@ void GraphicsClass::Shutdown()
 bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime, float rotationY)
 {
 	bool result;
-	float rotation = 0.0f;
+	static float rotation = 0.0f;
 
-	// Set the position of the camera.
-	m_Camera->SetPosition(0.0f, 2.0f, -12.0f);
 	/*
 	if (!m_fadeDone)
 	{
@@ -1017,14 +1056,24 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	// Set the position and rotation of the camera.
 	m_Camera->SetPosition(-10.0f, 6.0f, -10.0f);
 	m_Camera->SetRotation(0.0f, 45.0f, 0.0f);*/
-	/*
+	
 	// Update the rotation variable each frame.
 	rotation += (float)XM_PI * 0.0005f*frameTime;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
+	} 
+
+	// Set the position of the camera.
+	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
+
+	// Render the scene to texture first.
+	result = RenderToTexture(rotation);
+	if (!result)
+	{
+		return false;
 	}
-	*/
+
 	// Render the graphics scene.	
 	result = Render(rotation, mouseX, mouseY);
 	if (!result)
@@ -1035,15 +1084,62 @@ bool GraphicsClass::Frame(int mouseX, int mouseY, int fps, int cpu, float frameT
 	return true;
 }
 
-
 bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	XMFLOAT4 diffuseColor[4];
-	XMFLOAT4 lightPosition[4];
+	float refractionScale;
 	bool result;
 
+	// Set the refraction scale for the glass shader.
+	refractionScale = 0.1f;
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+
+	// Multiply the world matrix by the rotation.
+	worldMatrix = XMMatrixRotationY(rotation);
+
+	// Put the cube model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	// Render the cube model using the texture shader.
+	result = m_BumpMapShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTextureArray(),m_Light->GetDirection(),m_Light->GetDiffuseColor());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	
+	// Translate to back where the window model will be rendered.
+	worldMatrix = XMMatrixTranslation(0.0f, 0.0f, -1.5f);
+	
+	// Put the window model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_WindowModel->Render(m_D3D->GetDeviceContext());
+	
+	// Render the window model using the glass shader.
+	result = m_GlassShader->Render(m_D3D->GetDeviceContext(), m_WindowModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_WindowModel->GetTexture(), m_WindowModel->GetNormalMap(), m_RenderTexture->GetShaderResourceView(),
+		refractionScale);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
+
+	/*
 	// Create the diffuse color array from the four light colors.
 	diffuseColor[0] = m_Light1->GetDiffuseColor();
 	diffuseColor[1] = m_Light2->GetDiffuseColor();
@@ -1081,7 +1177,7 @@ bool GraphicsClass::Render(float rotation, int mouseX, int mouseY)
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
 
-	return true;
+	return true;*/
 	/*XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
 	bool result;	
 	static float rotation1 = 0.0f;

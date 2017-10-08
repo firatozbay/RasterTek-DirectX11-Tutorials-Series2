@@ -159,6 +159,7 @@
     <ClInclude Include="fontshaderclass.h" />
     <ClInclude Include="fpsclass.h" />
     <ClInclude Include="frustumclass.h" />
+    <ClInclude Include="glassshaderclass.h" />
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="fontshaderclass.cpp" />
     <ClCompile Include="fpsclass.cpp" />
     <ClCompile Include="frustumclass.cpp" />
+    <ClCompile Include="glassshaderclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="lightmapshaderclass.cpp" />
@@ -245,6 +247,8 @@
     <None Include="fog.vs" />
     <None Include="font.ps" />
     <None Include="font.vs" />
+    <None Include="glass.ps" />
+    <None Include="glass.vs" />
     <None Include="light.ps" />
     <None Include="light.vs" />
     <None Include="lightmap.ps" />

@@ -30,9 +30,10 @@
 #include "transparentshaderclass.h"
 #include "reflectionshaderclass.h"
 #include "fadeshaderclass.h"
-#include "fadebitmapclass.h"
+//#include "fadebitmapclass.h"
 #include "refractionshaderclass.h"
 #include "watershaderclass.h"
+#include "glassshaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -91,13 +92,15 @@ private:
 	FadeShaderClass* m_FadeShader;
 	float m_fadeInTime, m_accumulatedTime, m_fadePercentage;
 	bool m_fadeDone;
-	FadeBitmapClass* m_FadeBitmap;
+	//FadeBitmapClass* m_FadeBitmap;
 	//ModelClass *m_GroundModel, *m_WallModel, *m_BathModel, *m_WaterModel;
 	RenderTextureClass *m_RefractionTexture, *m_ReflectionTexture;
 	RefractionShaderClass* m_RefractionShader;
 	WaterShaderClass* m_WaterShader;
 	float m_waterHeight, m_waterTranslation;
 	LightClass *m_Light1, *m_Light2, *m_Light3, *m_Light4;
+	ModelClass* m_WindowModel;
+	GlassShaderClass* m_GlassShader;
 };
 
 #endif

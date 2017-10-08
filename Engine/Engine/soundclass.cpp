@@ -370,8 +370,8 @@ bool SoundClass::PlayWaveFile()
 		return false;
 	}
 
-	// Set volume of the buffer to 100%.
-	result = m_secondaryBuffer1->SetVolume(DSBVOLUME_MAX);
+	// Set volume of the buffer to 100%.	TODO: Change to max
+	result = m_secondaryBuffer1->SetVolume(DSBVOLUME_MIN);
 	if (FAILED(result))
 	{
 		return false;
