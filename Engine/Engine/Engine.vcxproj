@@ -163,6 +163,7 @@
     <ClInclude Include="frustumclass.h" />
     <ClInclude Include="glassshaderclass.h" />
     <ClInclude Include="graphicsclass.h" />
+    <ClInclude Include="horizontalblurshaderclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightmapshaderclass.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="modellistclass.h" />
     <ClInclude Include="multitextureshaderclass.h" />
+    <ClInclude Include="orthowindowclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="refractionshaderclass.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="timerclass.h" />
     <ClInclude Include="translateshaderclass.h" />
     <ClInclude Include="transparentshaderclass.h" />
+    <ClInclude Include="verticalblurshaderclass.h" />
     <ClInclude Include="watershaderclass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +211,7 @@
     <ClCompile Include="fpsclass.cpp" />
     <ClCompile Include="frustumclass.cpp" />
     <ClCompile Include="glassshaderclass.cpp" />
+    <ClCompile Include="horizontalblurshaderclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="lightmapshaderclass.cpp" />
@@ -217,6 +221,7 @@
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="modellistclass.cpp" />
     <ClCompile Include="multitextureshaderclass.cpp" />
+    <ClCompile Include="orthowindowclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="refractionshaderclass.cpp" />
@@ -231,6 +236,7 @@
     <ClCompile Include="timerclass.cpp" />
     <ClCompile Include="translateshaderclass.cpp" />
     <ClCompile Include="transparentshaderclass.cpp" />
+    <ClCompile Include="verticalblurshaderclass.cpp" />
     <ClCompile Include="watershaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +263,8 @@
     <None Include="font.vs" />
     <None Include="glass.ps" />
     <None Include="glass.vs" />
+    <None Include="horizontalblur.ps" />
+    <None Include="horizontalblur.vs" />
     <None Include="light.ps" />
     <None Include="light.vs" />
     <None Include="lightmap.ps" />
@@ -276,6 +284,8 @@
     <None Include="translate.vs" />
     <None Include="transparent.ps" />
     <None Include="transparent.vs" />
+    <None Include="verticalblur.ps" />
+    <None Include="verticalblur.vs" />
     <None Include="water.ps" />
     <None Include="water.vs" />
   </ItemGroup>

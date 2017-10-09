@@ -36,6 +36,10 @@
 #include "glassshaderclass.h"
 #include "fireshaderclass.h"
 #include "depthshaderclass.h"
+#include "horizontalblurshaderclass.h"
+#include "verticalblurshaderclass.h"
+#include "rendertextureclass.h"
+#include "orthowindowclass.h"
 
 /////////////
 // GLOBALS //
@@ -59,14 +63,20 @@ public:
 	bool Frame(float,float,float);//(int, int, int, int, float,float);
 
 private:
-	bool Render();// (float, int, int);
-	bool RenderToTexture(float);//(float, int, int);
+	bool Render(float);// (float, int, int);
+	//bool RenderToTexture(float);//(float, int, int);
 	//bool RenderScene(float, int, int);
 	bool RenderScene();
 	//bool RenderFadingScene();
 	//bool RenderNormalScene(float);
 	//bool RenderRefractionToTexture();
 	//bool RenderReflectionToTexture();
+	bool RenderSceneToTexture(float);
+	bool DownSampleTexture();
+	bool RenderHorizontalBlurToTexture();
+	bool RenderVerticalBlurToTexture();
+	bool UpSampleTexture();
+	bool Render2DTextureScene();
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
@@ -82,7 +92,7 @@ private:
 	AlphaMapShaderClass* m_AlphaMapShader;	
 	BumpMapShaderClass* m_BumpMapShader;
 	SpecMapShaderClass* m_SpecMapShader;
-	RenderTextureClass* m_RenderTexture;
+	//RenderTextureClass* m_RenderTexture;
 	DebugWindowClass* m_DebugWindow;
 	TextureShaderClass* m_TextureShader;
 	FogShaderClass* m_FogShader;
@@ -106,6 +116,10 @@ private:
 	FireShaderClass* m_FireShader;
 	ModelClass *m_FloorModel, *m_BillboardModel;
 	DepthShaderClass* m_DepthShader;
+	HorizontalBlurShaderClass* m_HorizontalBlurShader;
+	VerticalBlurShaderClass* m_VerticalBlurShader;
+	RenderTextureClass *m_RenderTexture, *m_DownSampleTexure, *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
+	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
 };
 
 #endif
