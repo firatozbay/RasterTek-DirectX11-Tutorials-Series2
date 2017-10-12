@@ -162,6 +162,12 @@
     <ClInclude Include="tessellatedmodelclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="particlesystemclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particleshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -303,6 +309,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tessellatedmodelclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particlesystemclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particleshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -449,6 +461,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="color.hs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="particle.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="particle.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

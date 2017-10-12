@@ -173,6 +173,8 @@
     <ClInclude Include="modellistclass.h" />
     <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="orthowindowclass.h" />
+    <ClInclude Include="particleshaderclass.h" />
+    <ClInclude Include="particlesystemclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="refractionshaderclass.h" />
@@ -223,6 +225,8 @@
     <ClCompile Include="modellistclass.cpp" />
     <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="orthowindowclass.cpp" />
+    <ClCompile Include="particleshaderclass.cpp" />
+    <ClCompile Include="particlesystemclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="refractionshaderclass.cpp" />
@@ -276,6 +280,8 @@
     <None Include="multitexture.ps" />
     <None Include="multitexture.vs" />
     <None Include="packages.config" />
+    <None Include="particle.ps" />
+    <None Include="particle.vs" />
     <None Include="reflection.ps" />
     <None Include="reflection.vs" />
     <None Include="refraction.ps" />

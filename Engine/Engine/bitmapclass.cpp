@@ -22,7 +22,7 @@ BitmapClass::~BitmapClass()
 }
 
 
-bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, char* textureFilename, int bitmapWidth, int bitmapHeight, XMMATRIX baseViewMatrix)
+bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, HWND hwnd, int screenWidth, int screenHeight, WCHAR* textureFilename, int bitmapWidth, int bitmapHeight, XMMATRIX baseViewMatrix)
 {
 	bool result;
 
@@ -349,7 +349,7 @@ void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* filename)
 {
 	bool result;
 

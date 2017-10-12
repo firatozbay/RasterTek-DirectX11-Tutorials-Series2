@@ -42,6 +42,8 @@
 #include "orthowindowclass.h"
 #include "colorshaderclass.h"
 #include "tessellatedmodelclass.h"
+#include "particleshaderclass.h"
+#include "particlesystemclass.h"
 
 /////////////
 // GLOBALS //
@@ -62,7 +64,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();	
-	bool Frame(float,float,float);//(int, int, int, int, float,float);
+	bool Frame(float);//(int, int, int, int, float,float);
 
 private:
 	bool Render(float);// (float, int, int);
@@ -125,7 +127,8 @@ private:
 	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
 	ColorShaderClass* m_ColorShader;
 	TessellatedModelClass* m_TessellatedModel;
-
+	ParticleShaderClass* m_ParticleShader;
+	ParticleSystemClass* m_ParticleSystem;
 };
 
 #endif

@@ -65,6 +65,9 @@ GraphicsClass::GraphicsClass()
 	m_UpSampleTexure = 0;
 	m_SmallWindow = 0;
 	m_FullScreenWindow = 0;
+	m_ParticleShader = 0;
+	m_ParticleSystem = 0;
+	m_ColorShader = 0;
 }
 
 
@@ -111,6 +114,39 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	m_Camera->SetPosition(0.0f, -2.0f, -10.0f);
+
+	// Create the particle shader object.
+	m_ParticleShader = new ParticleShaderClass;
+	if (!m_ParticleShader)
+	{
+		return false;
+	}
+
+	// Initialize the particle shader object.
+	result = m_ParticleShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the particle shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the particle system object.
+	m_ParticleSystem = new ParticleSystemClass;
+	if (!m_ParticleSystem)
+	{
+		return false;
+	}
+
+	// Initialize the particle system object.
+	result = m_ParticleSystem->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/star.dds");
+	if (!result)
+	{
+		return false;
+	}
+
+
+	/*
 	// Create the floor model object.
 	m_FloorModel = new ModelClass;
 	if (!m_FloorModel)
@@ -554,12 +590,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the position of the water.
 	m_waterTranslation = 0.0f;
-	*/
 
 	// Set the initial position of the camera.
 	//m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
-	/*
 	// Create the model object.
 	m_Model = new ModelClass;
 	if (!m_Model)
@@ -574,8 +608,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
-	*/
-	/*
 	// Create the render to texture object.
 	m_RenderTexture = new RenderTextureClass;
 	if (!m_RenderTexture)
@@ -588,8 +620,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!result)
 	{
 		return false;
-	}*/
-	/*
+	}
 	// Create the bitmap object.
 	m_FadeBitmap = new FadeBitmapClass;
 	if (!m_FadeBitmap)
@@ -604,7 +635,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
 		return false;
 	}
-	*/
+	
 	// Create the color shader object.
 	m_ColorShader = new ColorShaderClass;
 	if (!m_ColorShader)
@@ -645,7 +676,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the fade shader object.", L"Error", MB_OK);
 		return false;
 	}
-	/*
+	
 	// Create the floor model
 	m_FloorModel = new ModelClass;
 	if (!m_FloorModel)
@@ -660,7 +691,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
 		return false;
 	}
-	*/
+	
 	// Create the reflection shader object.
 	m_ReflectionShader = new ReflectionShaderClass;
 	if (!m_ReflectionShader)
@@ -839,7 +870,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//m_Camera->SetPosition(0.0f, 0.0f, -1.0f);
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
-	/*
+	
 	// Create the render to texture object.
 	m_RenderTexture = new RenderTextureClass;
 	if (!m_RenderTexture)
@@ -853,9 +884,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-	*/
+	
 	// Create the debug window object.
-	/*
+	
 	m_DebugWindow = new DebugWindowClass;
 	if (!m_DebugWindow)
 	{
@@ -868,7 +899,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
 		return false;
-	}*/
+	}
 
 	// Create the texture shader object.
 	m_TextureShader = new TextureShaderClass;
@@ -884,7 +915,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
 		return false;
 	}
-	/*
+	
 	// Create the bitmap object.
 	m_Bitmap = new BitmapClass;
 	if (!m_Bitmap)
@@ -899,7 +930,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
 		return false;
 	}
-	*/
+	
 	// Create the text object.
 	m_Text = new TextClass;
 	if (!m_Text)
@@ -936,13 +967,28 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-
+	*/
 	return true;
 }
 
 
 void GraphicsClass::Shutdown()
 {
+	// Release the particle system object.
+	if (m_ParticleSystem)
+	{
+		m_ParticleSystem->Shutdown();
+		delete m_ParticleSystem;
+		m_ParticleSystem = 0;
+	}
+
+	// Release the particle shader object.
+	if (m_ParticleShader)
+	{
+		m_ParticleShader->Shutdown();
+		delete m_ParticleShader;
+		m_ParticleShader = 0;
+	}
 	// Release the full screen ortho window object.
 	if (m_FullScreenWindow)
 	{
@@ -1372,10 +1418,12 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
+bool GraphicsClass::Frame(float frameTime) {
 	bool result;
 	static float rotation = 0.0f;
 
+	// Run the frame processing for the particle system.
+	m_ParticleSystem->Frame(frameTime, m_D3D->GetDeviceContext());
 	/*
 	if (!m_fadeDone)
 	{
@@ -1422,6 +1470,7 @@ bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
 	// Set the position and rotation of the camera.
 	m_Camera->SetPosition(-10.0f, 6.0f, -10.0f);
 	m_Camera->SetRotation(0.0f, 45.0f, 0.0f);*/
+	/*
 	// Update the rotation variable each frame.
 	rotation += (float)XM_PI * 0.005f;
 	if (rotation > 360.0f)
@@ -1430,7 +1479,7 @@ bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
 	}
 
 	// Update the position of the camera.
-	m_Camera->SetPosition(positionX, positionY, positionZ);
+	m_Camera->SetPosition(positionX, positionY, positionZ);*/
 	/*
 	// Render the scene to texture first.
 	result = RenderToTexture(rotation);
@@ -1439,18 +1488,56 @@ bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
 		return false;
 	}
 	*/
+	
 	// Render the graphics scene.	
 	result = Render(rotation);//(rotation, 0, 0);
 	if (!result)
 	{
 		return false;
 	}
-
+	
 	return true;
 }
 
 bool GraphicsClass::Render(float rotation)//(float rotation, int mouseX, int mouseY)
 {
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	bool result;
+
+
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Turn on alpha blending.
+	m_D3D->TurnOnAlphaBlending();
+
+	// Put the particle system vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_ParticleSystem->Render(m_D3D->GetDeviceContext());
+
+	// Render the model using the texture shader.
+	result = m_ParticleShader->Render(m_D3D->GetDeviceContext(), m_ParticleSystem->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_ParticleSystem->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Turn off alpha blending.
+	m_D3D->TurnOffAlphaBlending();
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
+
+	return true;
+	/*
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
@@ -1484,7 +1571,7 @@ bool GraphicsClass::Render(float rotation)//(float rotation, int mouseX, int mou
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
 
-	return true;
+	return true;*/
 	/*
 	bool result;
 

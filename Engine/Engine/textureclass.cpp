@@ -22,8 +22,21 @@ TextureClass::~TextureClass()
 }
 
 
-bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* filename)
 {
+	HRESULT result;
+
+
+	// Load the texture in.
+	result = CreateDDSTextureFromFile(device, filename, NULL, &m_textureView, 0, NULL);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	return true;
+
+	/*
 	bool result;
 	int height, width;
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -85,7 +98,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	delete[] m_targaData;
 	m_targaData = 0;
 
-	return true;
+	return true;*/
 }
 
 
