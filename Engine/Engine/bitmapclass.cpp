@@ -110,7 +110,7 @@ bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatri
 	RenderBuffers(deviceContext);
 
 	// Render the bitmap with the texture shader.
-	result = m_TextureShader->Render(deviceContext, m_indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, GetTexture());
+//	result = m_TextureShader->Render(deviceContext, m_indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, GetTexture());
 	if (!result)
 	{
 		return false;

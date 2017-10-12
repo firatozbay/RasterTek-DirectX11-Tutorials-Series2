@@ -98,7 +98,7 @@ bool DebugWindowClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX world
 	RenderBuffers(deviceContext);
 
 	// Render the bitmap with the texture shader.
-	result = m_TextureShader->Render(deviceContext, m_indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, shaderResourceView);
+	//result = m_TextureShader->Render(deviceContext, m_indexCount, worldMatrix, m_baseViewMatrix, orthoMatrix, shaderResourceView);
 	if (!result)
 	{
 		return false;

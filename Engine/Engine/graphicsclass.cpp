@@ -824,6 +824,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	*/
 	// Create the debug window object.
+	/*
 	m_DebugWindow = new DebugWindowClass;
 	if (!m_DebugWindow)
 	{
@@ -836,7 +837,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
 		return false;
-	}
+	}*/
 
 	// Create the texture shader object.
 	m_TextureShader = new TextureShaderClass;
@@ -845,14 +846,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Initialize the texture shader object.
+	// Initialize the texture shader object
 	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
 		return false;
 	}
-
+	/*
 	// Create the bitmap object.
 	m_Bitmap = new BitmapClass;
 	if (!m_Bitmap)
@@ -867,7 +868,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
 		return false;
 	}
-	
+	*/
 	// Create the text object.
 	m_Text = new TextClass;
 	if (!m_Text)
@@ -1403,6 +1404,40 @@ bool GraphicsClass::Frame(float positionX, float positionY, float positionZ) {
 
 bool GraphicsClass::Render(float rotation)//(float rotation, int mouseX, int mouseY)
 {
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	bool result;
+
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Rotate the world matrix by the rotation value so that the triangle will spin.
+	worldMatrix = XMMatrixRotationY(rotation);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	// Render the model using the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetVertexCount(), m_Model->GetInstanceCount(), worldMatrix, viewMatrix,
+	projectionMatrix, m_Model->GetTexture());
+
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
+
+	return true;
+	/*
 	bool result;
 
 
@@ -1445,7 +1480,7 @@ bool GraphicsClass::Render(float rotation)//(float rotation, int mouseX, int mou
 	if (!result)
 	{
 		return false;
-	}
+	}*/
 	/*
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
@@ -1852,7 +1887,7 @@ bool GraphicsClass::RenderSceneToTexture(float rotation)
 	m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the texture shader.
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetVertexCount(), m_Model->GetInstanceCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_Model->GetTexture());
 	if (!result)
 	{
@@ -1895,7 +1930,7 @@ bool GraphicsClass::DownSampleTexture()
 
 	// Put the small ortho window vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_SmallWindow->Render(m_D3D->GetDeviceContext());
-
+	/*
 	// Render the small ortho window using the texture shader and the render to texture of the scene as the texture resource.
 	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix,
 		m_RenderTexture->GetShaderResourceView());
@@ -1903,7 +1938,7 @@ bool GraphicsClass::DownSampleTexture()
 	{
 		return false;
 	}
-
+	*/
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->TurnZBufferOn();
 
@@ -2047,10 +2082,10 @@ bool GraphicsClass::UpSampleTexture()
 
 	// Put the full screen ortho window vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_FullScreenWindow->Render(m_D3D->GetDeviceContext());
-
+	/*
 	// Render the full screen ortho window using the texture shader and the small sized final blurred render to texture resource.
 	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix,
-		m_VerticalBlurTexture->GetShaderResourceView());
+		m_VerticalBlurTexture->GetShaderResourceView());*/
 	if (!result)
 	{
 		return false;
@@ -2090,10 +2125,10 @@ bool GraphicsClass::Render2DTextureScene()
 
 	// Put the full screen ortho window vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_FullScreenWindow->Render(m_D3D->GetDeviceContext());
-
+	/*
 	// Render the full screen ortho window using the texture shader and the full screen sized blurred render to texture resource.
 	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix,
-		m_UpSampleTexure->GetShaderResourceView());
+		m_UpSampleTexure->GetShaderResourceView());*/
 	if (!result)
 	{
 		return false;

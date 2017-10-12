@@ -51,6 +51,10 @@ private:
 	{
 		float x, y, z;
 	};
+	struct InstanceType
+	{
+		XMFLOAT3 position;
+	};
 public:
 	ModelClass();
 	ModelClass(const ModelClass&);
@@ -61,7 +65,9 @@ public:
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
-	int GetIndexCount();
+	int GetVertexCount();
+	int GetInstanceCount();
+
 
 	ID3D11ShaderResourceView* GetTexture();		//Assume it is 0
 	ID3D11ShaderResourceView* GetNormalMap();	//Assume it is 1
@@ -84,8 +90,10 @@ private:
 	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
 	void CalculateNormal(VectorType, VectorType, VectorType&);
 private:
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-	int m_vertexCount, m_indexCount;	
+	ID3D11Buffer *m_vertexBuffer;
+	ID3D11Buffer* m_instanceBuffer;
+	int m_vertexCount;	
+	int m_instanceCount;
 	//TextureClass* m_Texture;
 	TextureArrayClass* m_TextureArray;
 	ModelType* m_model;
