@@ -159,6 +159,9 @@
     <ClInclude Include="verticalblurshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tessellatedmodelclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -299,6 +302,9 @@
     <ClCompile Include="verticalblurshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tessellatedmodelclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -437,6 +443,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="verticalblur.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="color.ds">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="color.hs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

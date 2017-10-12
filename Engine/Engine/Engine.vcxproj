@@ -181,6 +181,7 @@
     <ClInclude Include="soundclass.h" />
     <ClInclude Include="specmapshaderclass.h" />
     <ClInclude Include="systemclass.h" />
+    <ClInclude Include="tessellatedmodelclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="texturearrayclass.h" />
     <ClInclude Include="textureclass.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="specmapshaderclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
+    <ClCompile Include="tessellatedmodelclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="texturearrayclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
@@ -249,6 +251,8 @@
     <None Include="bumpmap.vs" />
     <None Include="clipplane.ps" />
     <None Include="clipplane.vs" />
+    <None Include="color.ds" />
+    <None Include="color.hs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
     <None Include="depth.ps" />

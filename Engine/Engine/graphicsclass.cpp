@@ -10,6 +10,7 @@ GraphicsClass::GraphicsClass()
 	m_D3D = 0;
 	m_Camera = 0;
 	m_Model = 0;	
+	m_TessellatedModel = 0;
 	m_Bitmap = 0;
 	m_Text = 0;
 	m_ModelList = 0;
@@ -284,12 +285,28 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/seafloor.dds", "../Engine/data/cube.txt");
+	result = m_Model->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/seafloor.dds", "../Engine/data/triangle.txt");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Create the model object.
+	m_TessellatedModel = new TessellatedModelClass;
+	if (!m_Model)
+	{
+		return false;
+	}
+
+	// Initialize the model object.
+	result = m_TessellatedModel->Initialize(m_D3D->GetDevice());
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the depth shader object.
 	m_DepthShader = new DepthShaderClass;
 	if (!m_DepthShader)
@@ -588,6 +605,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 	*/
+	// Create the color shader object.
+	m_ColorShader = new ColorShaderClass;
+	if (!m_ColorShader)
+	{
+		return false;
+	}
+
+	// Initialize the color shader object.
+	result = m_ColorShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
+		return false;
+	}
 	// Set the fade in time to 3000 milliseconds.
 	m_fadeInTime = 3000.0f;
 
@@ -943,6 +974,14 @@ void GraphicsClass::Shutdown()
 		delete m_VerticalBlurTexture;
 		m_VerticalBlurTexture = 0;
 	}
+	
+	// Release the color shader object.
+	if (m_ColorShader)
+	{
+		m_ColorShader->Shutdown();
+		delete m_ColorShader;
+		m_ColorShader = 0;
+	}
 
 	// Release the horizontal blur render to texture object.
 	if (m_HorizontalBlurTexture)
@@ -1267,6 +1306,14 @@ void GraphicsClass::Shutdown()
 		m_ModelList = 0;
 	}
 
+	// Release the model list object.
+	if (m_TessellatedModel)
+	{
+		m_TessellatedModel->Shutdown();
+		delete m_TessellatedModel;
+		m_TessellatedModel = 0;
+	}
+
 	// Release the text object.
 	if (m_Text)
 	{
@@ -1419,14 +1466,15 @@ bool GraphicsClass::Render(float rotation)//(float rotation, int mouseX, int mou
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Rotate the world matrix by the rotation value so that the triangle will spin.
-	worldMatrix = XMMatrixRotationY(rotation);
+	//worldMatrix = XMMatrixRotationY(rotation);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_D3D->GetDeviceContext());
+	m_TessellatedModel->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the texture shader.
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetVertexCount(), m_Model->GetInstanceCount(), worldMatrix, viewMatrix,
-	projectionMatrix, m_Model->GetTexture());
+	result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_TessellatedModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 12.0f);
+	//result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetVertexCount(), m_Model->GetInstanceCount(), worldMatrix, viewMatrix,
+	//projectionMatrix, m_Model->GetTexture());
 
 	if (!result)
 	{

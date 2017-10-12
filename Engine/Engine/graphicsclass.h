@@ -40,6 +40,8 @@
 #include "verticalblurshaderclass.h"
 #include "rendertextureclass.h"
 #include "orthowindowclass.h"
+#include "colorshaderclass.h"
+#include "tessellatedmodelclass.h"
 
 /////////////
 // GLOBALS //
@@ -78,6 +80,7 @@ private:
 	bool UpSampleTexture();
 	bool Render2DTextureScene();
 private:
+
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
@@ -120,6 +123,9 @@ private:
 	VerticalBlurShaderClass* m_VerticalBlurShader;
 	RenderTextureClass *m_RenderTexture, *m_DownSampleTexure, *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
 	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
+	ColorShaderClass* m_ColorShader;
+	TessellatedModelClass* m_TessellatedModel;
+
 };
 
 #endif
