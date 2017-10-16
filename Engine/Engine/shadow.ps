@@ -55,7 +55,7 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
 
 
 	// Set the bias value for fixing the floating point precision issues.
-	bias = 0.0001f;
+	bias = 0.001f;
 
 	// Set the default output color to the ambient light value for all pixels.
     color = ambientColor;
