@@ -222,6 +222,14 @@ void InputClass::ProcessInput()
 }
 
 
+void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
+{
+	mouseX = m_mouseX;
+	mouseY = m_mouseY;
+	return;
+}
+
+
 bool InputClass::IsEscapePressed()
 {
 	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
@@ -233,8 +241,10 @@ bool InputClass::IsEscapePressed()
 	return false;
 }
 
-bool InputClass::IsLeftArrowPressed()
+
+bool InputClass::IsLeftPressed()
 {
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
 	if (m_keyboardState[DIK_LEFT] & 0x80)
 	{
 		return true;
@@ -244,8 +254,9 @@ bool InputClass::IsLeftArrowPressed()
 }
 
 
-bool InputClass::IsRightArrowPressed()
+bool InputClass::IsRightPressed()
 {
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
 	if (m_keyboardState[DIK_RIGHT] & 0x80)
 	{
 		return true;
@@ -254,22 +265,74 @@ bool InputClass::IsRightArrowPressed()
 	return false;
 }
 
-char InputClass::KeyPressed()
+
+bool InputClass::IsUpPressed()
 {
-	int i;
-	for(i=0;i<255;i++)
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
+	if (m_keyboardState[DIK_UP] & 0x80)
 	{
-		if (m_keyboardState[i] & 0x80)
-		{
-			return i;
-		}
+		return true;
 	}
+
+	return false;
 }
 
 
-void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
+bool InputClass::IsDownPressed()
 {
-	mouseX = m_mouseX;
-	mouseY = m_mouseY;
-	return;
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
+	if (m_keyboardState[DIK_DOWN] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputClass::IsAPressed()
+{
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
+	if (m_keyboardState[DIK_A] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputClass::IsZPressed()
+{
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
+	if (m_keyboardState[DIK_Z] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputClass::IsPgUpPressed()
+{
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
+	if (m_keyboardState[DIK_PGUP] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputClass::IsPgDownPressed()
+{
+	// Do a bitwise and on the keyboard state to check if the key is currently being pressed.
+	if (m_keyboardState[DIK_PGDN] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
 }

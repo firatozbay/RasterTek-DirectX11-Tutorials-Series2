@@ -10,12 +10,17 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+
+
 //////////////
 // INCLUDES //
 //////////////
+#include <dxgi.h>
+#include <d3dcommon.h>
 #include <d3d11.h>
-#include <directxmath.h>
+#include <DirectXMath.h>
 using namespace DirectX;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: D3DClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,15 +46,9 @@ public:
 
 	void GetVideoCardInfo(char*, int&);
 
-	void TurnZBufferOn();
-	void TurnZBufferOff();
-
-	void TurnOnAlphaBlending();
-	void TurnOffAlphaBlending();
-
-	ID3D11DepthStencilView* GetDepthStencilView();
 	void SetBackBufferRenderTarget();
 	void ResetViewport();
+
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;
@@ -65,9 +64,6 @@ private:
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_worldMatrix;
 	XMMATRIX m_orthoMatrix;
-	ID3D11DepthStencilState* m_depthDisabledStencilState;
-	ID3D11BlendState* m_alphaEnableBlendingState;
-	ID3D11BlendState* m_alphaDisableBlendingState;
 	D3D11_VIEWPORT m_viewport;
 };
 
