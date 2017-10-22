@@ -44,7 +44,8 @@ public:
 	bool Frame(float, float, float, float, float, float);
 
 private:
-	bool RenderSceneToTexture();
+	bool RenderSceneToTexture();	
+	bool RenderSceneToTexture2();
 	bool Render();
 
 private:
@@ -56,6 +57,9 @@ private:
 	DepthShaderClass* m_DepthShader;
 	ShadowShaderClass* m_ShadowShader;
 	LightShaderClass* m_LightShader;
+	LightClass* m_Light2;
+	RenderTextureClass* m_RenderTexture2;
+
 };
 
 #endif
