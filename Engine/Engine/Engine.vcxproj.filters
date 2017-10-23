@@ -171,6 +171,9 @@
     <ClInclude Include="shadowshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="softshadowshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -321,6 +324,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="shadowshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="softshadowshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -479,6 +485,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shadow.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="softshadow.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="softshadow.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
