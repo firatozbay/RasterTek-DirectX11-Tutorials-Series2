@@ -99,7 +99,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the light object.
 	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_Light->SetDirection(0.0f, -0.75f, 0.5f);
+	m_Light->SetPosition(2.0f, 5.0f, -2.0f);
 
 	// Create the projection shader object.
 	m_ProjectionShader = new ProjectionShaderClass;
@@ -124,7 +124,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the projection texture object.
-	result = m_ProjectionTexture->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/dx11.dds");
+	result = m_ProjectionTexture->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), L"../Engine/data/grate.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the projection texture object.", L"Error", MB_OK);
@@ -260,7 +260,7 @@ bool GraphicsClass::Render()
 	// Render the ground model using the projection shader.
 	m_GroundModel->Render(m_D3D->GetDeviceContext());
 	result = m_ProjectionShader->Render(m_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_GroundModel->GetTexture(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(),
+		m_GroundModel->GetTexture(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetPosition(),
 		viewMatrix2, projectionMatrix2, m_ProjectionTexture->GetTexture());
 	if (!result)
 	{
@@ -274,7 +274,7 @@ bool GraphicsClass::Render()
 	// Render the cube model using the projection shader.
 	m_CubeModel->Render(m_D3D->GetDeviceContext());
 	result = m_ProjectionShader->Render(m_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_CubeModel->GetTexture(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(),
+		m_CubeModel->GetTexture(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetPosition(),
 		viewMatrix2, projectionMatrix2, m_ProjectionTexture->GetTexture());
 	if (!result)
 	{
