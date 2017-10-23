@@ -21,6 +21,9 @@
 #include "horizontalblurshaderclass.h"
 #include "verticalblurshaderclass.h"
 #include "softshadowshaderclass.h"
+#include "projectionshaderclass.h"
+#include "textureclass.h"
+#include "viewpointclass.h"
 
 
 /////////////
@@ -46,32 +49,19 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame(float, float, float, float, float, float);
+	bool Frame();
 
 private:
-	bool RenderSceneToTexture();
-	bool RenderBlackAndWhiteShadows();
-	bool DownSampleTexture();
-	bool RenderHorizontalBlurToTexture();
-	bool RenderVerticalBlurToTexture();
-	bool UpSampleTexture();
 	bool Render();
 
-private:
+private:	
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
-	LightClass* m_Light;	
-	RenderTextureClass *m_RenderTexture, *m_BlackWhiteRenderTexture, *m_DownSampleTexture;
-	RenderTextureClass *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexture;
-	DepthShaderClass* m_DepthShader;
-	ShadowShaderClass* m_ShadowShader;
-	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
-	TextureShaderClass* m_TextureShader;
-	HorizontalBlurShaderClass* m_HorizontalBlurShader;
-	VerticalBlurShaderClass* m_VerticalBlurShader;
-	SoftShadowShaderClass* m_SoftShadowShader;
-
+	ModelClass *m_GroundModel, *m_CubeModel;
+	LightClass* m_Light;
+	ProjectionShaderClass* m_ProjectionShader;
+	TextureClass* m_ProjectionTexture;
+	ViewPointClass* m_ViewPoint;
 };
 
 #endif
