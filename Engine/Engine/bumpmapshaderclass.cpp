@@ -51,15 +51,15 @@ void BumpMapShaderClass::Shutdown()
 
 
 bool BumpMapShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection,
-	XMFLOAT4 diffuseColor)
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalMapTexture,
+	XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection,
-		diffuseColor);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, colorTexture, normalMapTexture,
+		lightDirection, diffuseColor);
 	if (!result)
 	{
 		return false;
@@ -346,8 +346,8 @@ void BumpMapShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND
 
 bool BumpMapShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix,
 	XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
-	ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection,
-	XMFLOAT4 diffuseColor)
+	ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalMapTexture,
+	XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -385,8 +385,9 @@ bool BumpMapShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	// Now set the matrix constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 
-	// Set shader texture array resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 2, textureArray);
+	// Set shader texture resources in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &colorTexture);
+	deviceContext->PSSetShaderResources(1, 1, &normalMapTexture);
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
