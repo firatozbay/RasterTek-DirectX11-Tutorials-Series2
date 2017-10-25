@@ -9,17 +9,21 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "d3dclass.h"
-#include "shadermanagerclass.h"
 #include "cameraclass.h"
-#include "lightclass.h"
-#include "modelclass.h"
-#include "bumpmodelclass.h"
+#include "textureshaderclass.h"
+#include "bitmapclass.h"
+#include "rendertextureclass.h"
+#include "orthowindowclass.h"
+#include "horizontalblurshaderclass.h"
+#include "verticalblurshaderclass.h"
+#include "glowmapshaderclass.h"
+#include "glowshaderclass.h"
 
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -40,16 +44,26 @@ public:
 	bool Frame();
 
 private:
-	bool Render(float);
+	bool Render();
+	bool RenderGlowMapToTexture();
+	bool DownSampleTexture();
+	bool RenderHorizontalBlurToTexture();
+	bool RenderVerticalBlurToTexture();
+	bool UpSampleTexture();
+	bool RenderUIElementsToTexture();
+	bool RenderGlowScene();
 
 private:
 	D3DClass* m_D3D;
-	ShaderManagerClass* m_ShaderManager;
 	CameraClass* m_Camera;
-	LightClass* m_Light;
-	ModelClass* m_Model1;
-	ModelClass* m_Model2;
-	BumpModelClass* m_Model3;
+	TextureShaderClass* m_TextureShader;
+	BitmapClass* m_Bitmap;
+	RenderTextureClass *m_RenderTexture, *m_DownSampleTexure, *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
+	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
+	HorizontalBlurShaderClass* m_HorizontalBlurShader;
+	VerticalBlurShaderClass* m_VerticalBlurShader;
+	GlowMapShaderClass* m_GlowMapShader;
+	GlowShaderClass* m_GlowShader;
 };
 
 #endif

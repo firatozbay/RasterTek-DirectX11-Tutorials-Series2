@@ -186,6 +186,12 @@
     <ClInclude Include="bumpmodelclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="glowmapshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glowshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -351,6 +357,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="bumpmodelclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glowmapshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glowshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -521,6 +533,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="projection.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="glow.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="glow.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="glowmap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="glowmap.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
