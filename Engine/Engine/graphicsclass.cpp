@@ -2,6 +2,7 @@
 // Filename: graphicsclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "graphicsclass.h"
+#include "applicationclass.h"
 
 
 GraphicsClass::GraphicsClass()
@@ -87,7 +88,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the bitmap object.
-	result = m_Bitmap->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), screenWidth, screenHeight, L"../Engine/data/test.dds", L"../Engine/data/glowmap.dds", 256, 32);
+	result = m_Bitmap->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), screenWidth, screenHeight, L"../Engine/data/test.dds", 256, 32);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
@@ -488,9 +489,9 @@ bool GraphicsClass::RenderGlowMapToTexture()
 		return false;
 	}
 
-	// Render the bitmap using the glow map shader.
-	m_GlowMapShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, 
-							m_Bitmap->GetTexture(), m_Bitmap->GetGlowMap());
+	//// Render the bitmap using the glow map shader.
+	//m_GlowMapShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, 
+	//						m_Bitmap->GetTexture(), m_Bitmap->GetGlowMap());
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->TurnZBufferOn();

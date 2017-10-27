@@ -10,7 +10,6 @@ TextClass::TextClass()
 	m_FontShader = 0;
 
 	m_sentence1 = 0;
-	m_sentence2 = 0;
 }
 
 
@@ -45,7 +44,7 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Initialize the font object.
-	result = m_Font->Initialize(device, deviceContext, "../Engine/data/fontdata.txt", L"../Engine/data/font.tga");
+	result = m_Font->Initialize(device, deviceContext, "../Engine/data/fontdata.txt", "../Engine/data/font.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the font object.", L"Error", MB_OK);
@@ -75,21 +74,7 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence1, "Hello", 100, 100, 1.0f, 1.0f, 1.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Initialize the first sentence.
-	result = InitializeSentence(&m_sentence2, 16, device);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence2, "Goodbye", 100, 200, 1.0f, 1.0f, 0.0f, deviceContext);
+	result = UpdateSentence(m_sentence1, "Intersection", 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -103,9 +88,6 @@ void TextClass::Shutdown()
 {
 	// Release the first sentence.
 	ReleaseSentence(&m_sentence1);
-
-	// Release the second sentence.
-	ReleaseSentence(&m_sentence2);
 
 	// Release the font shader object.
 	if (m_FontShader)
@@ -134,13 +116,6 @@ bool TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix,
 
 	// Draw the first sentence.
 	result = RenderSentence(deviceContext, m_sentence1, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Draw the second sentence.
-	result = RenderSentence(deviceContext, m_sentence2, worldMatrix, orthoMatrix);
 	if (!result)
 	{
 		return false;
@@ -282,13 +257,6 @@ bool TextClass::SetMousePosition(int mouseX, int mouseY, ID3D11DeviceContext* de
 	strcpy_s(mouseString, "Mouse Y: ");
 	strcat_s(mouseString, tempString);
 
-	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence2, mouseString, 20, 40, 1.0f, 1.0f, 1.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -361,13 +329,6 @@ bool TextClass::SetCpu(int cpu, ID3D11DeviceContext* deviceContext)
 	strcpy_s(cpuString, "Cpu: ");
 	strcat_s(cpuString, tempString);
 	strcat_s(cpuString, "%");
-
-	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence2, cpuString, 20, 40, 0.0f, 1.0f, 0.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
 
 	return true;
 }
@@ -523,4 +484,24 @@ bool TextClass::SetRenderCount(int count, ID3D11DeviceContext* deviceContext)
 	}
 
 	return true;
+}
+
+bool TextClass::SetIntersection(bool intersection, ID3D11DeviceContext* deviceContext)
+{
+	char intersectionString[32];
+	bool result;
+
+
+	if (intersection)
+	{
+		strcpy_s(intersectionString, "Intersection");
+		result = UpdateSentence(m_sentence1, intersectionString, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
+	}
+	else
+	{
+		strcpy_s(intersectionString, "Intersection");
+		result = UpdateSentence(m_sentence1, intersectionString, 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
+	}
+
+	return result;
 }

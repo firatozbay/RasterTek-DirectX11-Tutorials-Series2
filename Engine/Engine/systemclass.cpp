@@ -10,6 +10,7 @@ SystemClass::SystemClass()
 	m_Graphics = 0;
 	m_Timer = 0;
 	m_Position = 0;
+	m_Application = 0;
 }
 
 
@@ -36,59 +37,73 @@ bool SystemClass::Initialize()
 	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	m_Input = new InputClass;
-	if (!m_Input)
+	// Create the application object.
+	m_Application = new ApplicationClass;
+	if (!m_Application)
 	{
 		return false;
 	}
 
-	// Initialize the input object.
-	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	// Initialize the application object.
+	result = m_Application->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
 	if (!result)
 	{
-		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		MessageBox(m_hwnd, L"Could not initialize the application object.", L"Error", MB_OK);
 		return false;
 	}
+	//// Create the input object.  This object will be used to handle reading the keyboard input from the user.
+	//m_Input = new InputClass;
+	//if (!m_Input)
+	//{
+	//	return false;
+	//}
 
-	// Create the graphics object.  This object will handle rendering all the graphics for this application.
-	m_Graphics = new GraphicsClass;
-	if (!m_Graphics)
-	{
-		return false;
-	}
+	//// Initialize the input object.
+	//result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	//if (!result)
+	//{
+	//	MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+	//	return false;
+	//}
 
-	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
-	if (!result)
-	{
-		return false;
-	}
+	//// Create the graphics object.  This object will handle rendering all the graphics for this application.
+	//m_Graphics = new GraphicsClass;
+	//if (!m_Graphics)
+	//{
+	//	return false;
+	//}
 
-	// Create the timer object.
-	m_Timer = new TimerClass;
-	if (!m_Timer)
-	{
-		return false;
-	}
+	//// Initialize the graphics object.
+	//result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the timer object.
-	result = m_Timer->Initialize();
-	if (!result)
-	{
-		MessageBox(m_hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
-		return false;
-	}
+	//// Create the timer object.
+	//m_Timer = new TimerClass;
+	//if (!m_Timer)
+	//{
+	//	return false;
+	//}
 
-	// Create the position object.
-	m_Position = new PositionClass;
-	if (!m_Position)
-	{
-		return false;
-	}
+	//// Initialize the timer object.
+	//result = m_Timer->Initialize();
+	//if (!result)
+	//{
+	//	MessageBox(m_hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
+	//	return false;
+	//}
 
-	// Set the initial position of the viewer to the same as the initial camera position.
-	m_Position->SetPosition(0.0f, 2.0f, -10.0f);
+	//// Create the position object.
+	//m_Position = new PositionClass;
+	//if (!m_Position)
+	//{
+	//	return false;
+	//}
+
+	//// Set the initial position of the viewer to the same as the initial camera position.
+	//m_Position->SetPosition(0.0f, 2.0f, -10.0f);
 
 	return true;
 }
@@ -96,6 +111,14 @@ bool SystemClass::Initialize()
 
 void SystemClass::Shutdown()
 {
+	// Release the graphics object.
+	if (m_Application)
+	{
+		m_Application->Shutdown();
+		delete m_Application;
+		m_Application = 0;
+	}
+
 	// Release the position object.
 	if (m_Position)
 	{
@@ -176,42 +199,49 @@ void SystemClass::Run()
 bool SystemClass::Frame()
 {
 	bool result;
-	float posX, posY, posZ, rotX, rotY, rotZ;
+//	float posX, posY, posZ, rotX, rotY, rotZ;
 
 
-	// Read the user input.
-	result = m_Input->Frame();
+	// Do the frame processing for the applicatioin object.
+	result = m_Application->Frame();
 	if (!result)
 	{
 		return false;
 	}
 
-	// Check if the user pressed escape and wants to exit the application.
-	if (m_Input->IsEscapePressed() == true)
-	{
-		return false;
-	}
+	//// Read the user input.
+	//result = m_Input->Frame();
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Update the system stats.
-	m_Timer->Frame();
+	//// Check if the user pressed escape and wants to exit the application.
+	//if (m_Input->IsEscapePressed() == true)
+	//{
+	//	return false;
+	//}
 
-	// Do the frame input processing.
-	result = HandleInput(m_Timer->GetTime());
-	if (!result)
-	{
-		return false;
-	}
+	//// Update the system stats.
+	//m_Timer->Frame();
 
-	// Get the view point position/rotation.
-	m_Position->GetPosition(posX, posY, posZ);
-	m_Position->GetRotation(rotX, rotY, rotZ);
+	//// Do the frame input processing.
+	//result = HandleInput(m_Timer->GetTime());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
-	if (!result)
-	{
-		return false;
-	}
+	//// Get the view point position/rotation.
+	//m_Position->GetPosition(posX, posY, posZ);
+	//m_Position->GetRotation(rotX, rotY, rotZ);
+
+	//// Do the frame processing for the graphics object.
+	//result = m_Graphics->Frame();
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	return true;
 }

@@ -9,7 +9,6 @@ BitmapClass::BitmapClass()
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
 	m_Texture = 0;
-	m_GlowMap = 0;
 }
 
 
@@ -23,7 +22,7 @@ BitmapClass::~BitmapClass()
 }
 
 
-bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int screenWidth, int screenHeight, WCHAR* textureFilename, WCHAR* glowMapFilename, int bitmapWidth, int bitmapHeight)
+bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int screenWidth, int screenHeight, WCHAR* textureFilename, int bitmapWidth, int bitmapHeight)
 {
 	bool result;
 
@@ -48,7 +47,7 @@ bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 	}
 
 	// Load the textures for this bitmap.
-	result = LoadTextures(device, deviceContext, textureFilename, glowMapFilename);
+	result = LoadTextures(device, deviceContext, textureFilename);
 	if(!result)
 	{
 		return false;
@@ -98,12 +97,6 @@ int BitmapClass::GetIndexCount()
 ID3D11ShaderResourceView* BitmapClass::GetTexture()
 {
 	return m_Texture->GetTexture();
-}
-
-
-ID3D11ShaderResourceView* BitmapClass::GetGlowMap()
-{
-	return m_GlowMap->GetTexture();
 }
 
 
@@ -324,7 +317,7 @@ void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool BitmapClass::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* filename, WCHAR* glowMapFilename)
+bool BitmapClass::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* filename)
 {
 	bool result;
 
@@ -343,20 +336,6 @@ bool BitmapClass::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* device
 		return false;
 	}
 
-	// Create the glow map texture object.
-	m_GlowMap = new TextureClass;
-	if(!m_GlowMap)
-	{
-		return false;
-	}
-
-	// Initialize the glow map texture object.
-	result = m_GlowMap->Initialize(device, deviceContext, glowMapFilename);
-	if(!result)
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -369,13 +348,6 @@ void BitmapClass::ReleaseTextures()
 		m_Texture->Shutdown();
 		delete m_Texture;
 		m_Texture = 0;
-	}
-
-	if(m_GlowMap)
-	{
-		m_GlowMap->Shutdown();
-		delete m_GlowMap;
-		m_GlowMap = 0;
 	}
 
 	return;

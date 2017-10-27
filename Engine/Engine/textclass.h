@@ -44,6 +44,8 @@ public:
 	bool SetCpu(int, ID3D11DeviceContext*);
 
 	bool SetRenderCount(int, ID3D11DeviceContext*);
+
+	bool SetIntersection(bool, ID3D11DeviceContext*);
 private:
 	bool InitializeSentence(SentenceType**, int, ID3D11Device*);
 	bool UpdateSentence(SentenceType*, char*, int, int, float, float, float, ID3D11DeviceContext*);
@@ -56,7 +58,6 @@ private:
 	int m_screenWidth, m_screenHeight;
 	XMMATRIX m_baseViewMatrix;
 	SentenceType* m_sentence1;
-	SentenceType* m_sentence2;
 };
 
 #endif
