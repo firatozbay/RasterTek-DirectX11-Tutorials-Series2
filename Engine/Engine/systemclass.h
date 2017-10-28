@@ -24,7 +24,6 @@
 #include "graphicsclass.h"
 #include "timerclass.h"
 #include "positionclass.h"
-#include "applicationclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +53,6 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
-	ApplicationClass* m_Application;
 	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
 	TimerClass* m_Timer;
