@@ -201,6 +201,15 @@
     <ClInclude Include="treeclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="deferredshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="deferred.vs">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="deferredbuffersclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -381,6 +390,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="treeclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="deferredshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="deferredbuffersclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -569,6 +584,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="transparentdepth.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="deferred.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

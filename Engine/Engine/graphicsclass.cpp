@@ -279,8 +279,8 @@ bool GraphicsClass::Frame(float posX, float posY, float posZ, float rotX, float 
 	m_Light->SetDirection(sinf(radians), cosf(radians), 0.0f);
 
 	// Set the position and lookat for the light.
-	m_Light->SetPosition(lightPosX, 8.0f, -0.1f);
-	m_Light->SetLookAt(-lightPosX, 0.0f, 0.0f);
+	//m_Light->SetPosition(lightPosX, 8.0f, -0.1f);
+	//m_Light->SetLookAt(-lightPosX, 0.0f, 0.0f);
 
 	// Render the graphics scene.
 	result = Render();
@@ -307,14 +307,14 @@ bool GraphicsClass::RenderSceneToTexture()
 	m_RenderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the light view matrix based on the light's position.
-	m_Light->GenerateViewMatrix();
+	//m_Light->GenerateViewMatrix();
 
 	// Get the world matrix from the d3d object.
 	m_D3D->GetWorldMatrix(worldMatrix);
 
 	// Get the view and orthographic matrices from the light object.
-	m_Light->GetViewMatrix(lightViewMatrix);
-	m_Light->GetOrthoMatrix(lightOrthoMatrix);
+	//m_Light->GetViewMatrix(lightViewMatrix);
+	//m_Light->GetOrthoMatrix(lightOrthoMatrix);
 
 	// Setup the translation matrix for the cube model.
 	m_CubeModel->GetPosition(posX, posY, posZ);
@@ -390,7 +390,7 @@ bool GraphicsClass::Render()
 	m_Camera->Render();
 
 	// Generate the light view matrix based on the light's position.
-	m_Light->GenerateViewMatrix();
+	//m_Light->GenerateViewMatrix();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	m_Camera->GetViewMatrix(viewMatrix);
@@ -398,8 +398,8 @@ bool GraphicsClass::Render()
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Get the light's view and projection matrices from the light object.
-	m_Light->GetViewMatrix(lightViewMatrix);
-	m_Light->GetOrthoMatrix(lightOrthoMatrix);
+	//m_Light->GetViewMatrix(lightViewMatrix);
+	//m_Light->GetOrthoMatrix(lightOrthoMatrix);
 
 	// Setup the translation matrix for the cube model.
 	m_CubeModel->GetPosition(posX, posY, posZ);

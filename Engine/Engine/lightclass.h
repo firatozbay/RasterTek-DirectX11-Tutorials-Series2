@@ -21,24 +21,18 @@ public:
 	LightClass(const LightClass&);
 	~LightClass();
 
+	void SetAmbientColor(float, float, float, float);
+	void SetDiffuseColor(float, float, float, float);
 	void SetDirection(float, float, float);
-	void SetPosition(float, float, float);
-	void SetLookAt(float, float, float);
 
+	XMFLOAT4 GetAmbientColor();
+	XMFLOAT4 GetDiffuseColor();
 	XMFLOAT3 GetDirection();
-	XMFLOAT3 GetPosition();
-
-	void GenerateViewMatrix();
-	void GenerateProjectionMatrix(float, float);
-	void GenerateOrthoMatrix(float, float, float, float);
-
-	void GetViewMatrix(XMMATRIX&);
-	void GetProjectionMatrix(XMMATRIX&);
-	void GetOrthoMatrix(XMMATRIX&);
 
 private:
-	XMFLOAT3 m_direction, m_position, m_lookAt;
-	XMMATRIX m_viewMatrix, m_projectionMatrix, m_orthoMatrix;
+	XMFLOAT4 m_ambientColor;
+	XMFLOAT4 m_diffuseColor;
+	XMFLOAT3 m_direction;
 };
 
 #endif
