@@ -20,10 +20,7 @@
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "inputclass.h"
-#include "graphicsclass.h"
-#include "timerclass.h"
-#include "positionclass.h"
+#include "applicationclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +41,6 @@ public:
 
 private:
 	bool Frame();
-	bool HandleInput(float);
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -52,11 +48,7 @@ private:
 	LPCWSTR m_applicationName;
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
-
-	InputClass* m_Input;
-	GraphicsClass* m_Graphics;
-	TimerClass* m_Timer;
-	PositionClass* m_Position;
+	ApplicationClass* m_Application;
 };
 
 

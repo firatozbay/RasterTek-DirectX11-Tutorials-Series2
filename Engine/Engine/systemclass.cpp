@@ -6,10 +6,7 @@
 
 SystemClass::SystemClass()
 {
-	m_Input = 0;
-	m_Graphics = 0;
-	m_Timer = 0;
-	m_Position = 0;
+	m_Application = 0;
 }
 
 
@@ -36,59 +33,19 @@ bool SystemClass::Initialize()
 	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	m_Input = new InputClass;
-	if (!m_Input)
+	// Create the application wrapper object.
+	m_Application = new ApplicationClass;
+	if (!m_Application)
 	{
 		return false;
 	}
 
-	// Initialize the input object.
-	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
-	if (!result)
-	{
-		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the graphics object.  This object will handle rendering all the graphics for this application.
-	m_Graphics = new GraphicsClass;
-	if (!m_Graphics)
-	{
-		return false;
-	}
-
-	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	// Initialize the application wrapper object.
+	result = m_Application->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
 	if (!result)
 	{
 		return false;
 	}
-
-	// Create the timer object.
-	m_Timer = new TimerClass;
-	if (!m_Timer)
-	{
-		return false;
-	}
-
-	// Initialize the timer object.
-	result = m_Timer->Initialize();
-	if (!result)
-	{
-		MessageBox(m_hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the position object.
-	m_Position = new PositionClass;
-	if (!m_Position)
-	{
-		return false;
-	}
-
-	// Set the initial position of the viewer to the same as the initial camera position.
-	m_Position->SetPosition(0.0f, 2.0f, -10.0f);
 
 	return true;
 }
@@ -96,33 +53,12 @@ bool SystemClass::Initialize()
 
 void SystemClass::Shutdown()
 {
-	// Release the position object.
-	if (m_Position)
+	// Release the application wrapper object.
+	if (m_Application)
 	{
-		delete m_Position;
-		m_Position = 0;
-	}
-
-	// Release the timer object.
-	if (m_Timer)
-	{
-		delete m_Timer;
-		m_Timer = 0;
-	}
-
-	// Release the graphics object.
-	if (m_Graphics)
-	{
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-		m_Graphics = 0;
-	}
-
-	// Release the input object.
-	if (m_Input)
-	{
-		delete m_Input;
-		m_Input = 0;
+		m_Application->Shutdown();
+		delete m_Application;
+		m_Application = 0;
 	}
 
 	// Shutdown the window.
@@ -176,79 +112,14 @@ void SystemClass::Run()
 bool SystemClass::Frame()
 {
 	bool result;
-	float posX, posY, posZ, rotX, rotY, rotZ;
 
 
-	// Read the user input.
-	result = m_Input->Frame();
+	// Do the frame processing for the application object.
+	result = m_Application->Frame();
 	if (!result)
 	{
 		return false;
 	}
-
-	// Check if the user pressed escape and wants to exit the application.
-	if (m_Input->IsEscapePressed() == true)
-	{
-		return false;
-	}
-
-	// Update the system stats.
-	m_Timer->Frame();
-
-	// Do the frame input processing.
-	result = HandleInput(m_Timer->GetTime());
-	if (!result)
-	{
-		return false;
-	}
-
-	// Get the view point position/rotation.
-	m_Position->GetPosition(posX, posY, posZ);
-	m_Position->GetRotation(rotX, rotY, rotZ);
-
-	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(posX, posY, posZ, rotX, rotY, rotZ, m_Timer->GetTime());
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-
-bool SystemClass::HandleInput(float frameTime)
-{
-	bool keyDown;
-
-
-	// Set the frame time for calculating the updated position.
-	m_Position->SetFrameTime(frameTime);
-
-	// Handle the input.
-	keyDown = m_Input->IsLeftPressed();
-	m_Position->TurnLeft(keyDown);
-
-	keyDown = m_Input->IsRightPressed();
-	m_Position->TurnRight(keyDown);
-
-	keyDown = m_Input->IsUpPressed();
-	m_Position->MoveForward(keyDown);
-
-	keyDown = m_Input->IsDownPressed();
-	m_Position->MoveBackward(keyDown);
-
-	keyDown = m_Input->IsAPressed();
-	m_Position->MoveUpward(keyDown);
-
-	keyDown = m_Input->IsZPressed();
-	m_Position->MoveDownward(keyDown);
-
-	keyDown = m_Input->IsPgUpPressed();
-	m_Position->LookUpward(keyDown);
-
-	keyDown = m_Input->IsPgDownPressed();
-	m_Position->LookDownward(keyDown);
 
 	return true;
 }

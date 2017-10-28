@@ -192,6 +192,15 @@
     <ClInclude Include="glowshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="applicationclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="transparentdepthshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="treeclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -363,6 +372,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="glowshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="applicationclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="transparentdepthshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="treeclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -545,6 +563,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="glowmap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="transparentdepth.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="transparentdepth.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
