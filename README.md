@@ -1,4 +1,4 @@
-# Engine
+# Rastertek DirectX 11 Tutorials Series 2 Converted Examples
 The engine from the RasterTek DirectX 11 Tutorials, the code from the their older tutorials are edited to work with Windows SDK.
 The progress is up to Tutorial 50 at this time, but the code can be used only as a reference for closer tutorials now as the every class changes drastically in one tutorial for one application then gets reverted back to another more primitive for another application.
 I will be dividing each tutorials source codes in different files for the prople who need a reference for their part.
@@ -20,3 +20,9 @@ instead of:
 #include <d3dx11async.h>
 
 I will be updating this readme a bit more as I find more issues I should explain.
+
+
+Rastertek DirectX 11 Tutorials - Series 2: http://www.rastertek.com/tutdx11s2.html
+
+Rastertek DirectX 11 Tutorials - Series 1: http://www.rastertek.com/tutdx11.html
+
